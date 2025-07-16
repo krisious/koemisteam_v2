@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('blogtag', function (Blueprint $table) {
+        Schema::create('blogtags', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('id_blog')->constrained('blogs')->onDelete('cascade');
+            $table->foreignId('id_tag')->constrained('tags')->onDelete('cascade');
             $table->timestamps();
         });
     }

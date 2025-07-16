@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('membercontact', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('members', function (Blueprint $table) {
+            $table->foreignId('id_member_contacts')->nullable()->constrained('member_contacts')->onDelete('cascade')->after('id_skill');
         });
     }
 
@@ -22,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('membercontact');
+        Schema::table('members', function (Blueprint $table) {
+            //
+        });
     }
 };

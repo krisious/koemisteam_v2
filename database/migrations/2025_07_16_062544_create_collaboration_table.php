@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('collaboration', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('id_project')->constrained('projects')->onDelete('cascade');
+            $table->foreignId('id_member')->constrained('members')->onDelete('cascade');
             $table->timestamps();
         });
     }

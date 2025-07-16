@@ -13,7 +13,13 @@ return new class extends Migration
     {
         Schema::create('members', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('id_user')->constrained('users')->onDelete('cascade');
+            $table->foreignId('id_skill')->constrained('skills')->onDelete('cascade');
+            $table->string('slug')->unique();
+            $table->string('profile_picture');
+            $table->text('bio')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
