@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('blog_tags', function (Blueprint $table) {
+        Schema::create('links', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_blog')->constrained('blogs')->onDelete('cascade');
-            $table->foreignId('id_tag')->constrained('tags')->onDelete('cascade');
+            $table->string('name');
+            $table->string('icon');
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('blogtag');
+        Schema::dropIfExists('links');
     }
 };
