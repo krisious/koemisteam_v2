@@ -8,7 +8,7 @@ class Contact extends Model
 {
     protected $guarded = [];
 
-    public function member()
+    public function contactMember()
     {
         return $this->belongsToMany(Member::class, 'member_contacts', 'id_contact', 'id_member')
             ->using(MemberContact::class)

@@ -38,7 +38,6 @@ class CategoryResource extends Resource
                 TextInput::make('name')
                     ->label('Kategori')
                     ->required()
-                    ->live()
                     ->afterStateUpdated(fn (Set $set, $state) =>
                         $set('slug', Str::slug($state))
                     )
@@ -65,7 +64,7 @@ class CategoryResource extends Resource
                     ->label('Slug')
                     ->sortable()
                     ->searchable(),
-            ])
+            ])->defaultSort('name', 'asc')
             ->filters([
                 //
             ])

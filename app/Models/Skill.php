@@ -8,8 +8,8 @@ class Skill extends Model
 {
     protected $guarded = [];
 
-    public function member()
+    public function skillMember()
     {
-        return $this->belongsToMany(Skill::class, 'member_skills', 'id_skill', 'id_member');
+        return $this->belongsToMany(Member::class, 'member_skills', 'id_skill', 'id_member');
     }
 }

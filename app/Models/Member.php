@@ -16,12 +16,12 @@ class Member extends Model
         return $this->belongsTo(User::class, 'id_user', 'id');
     }
 
-    public function skill()
+    public function memberSkill()
     {
         return $this->belongsToMany(Skill::class, 'member_skills', 'id_member', 'id_skill');
     }
 
-    public function contact()
+    public function memberContact()
     {
         return $this->belongsToMany(Contact::class, 'member_contacts', 'id_member', 'id_contact')
             ->using(MemberContact::class)

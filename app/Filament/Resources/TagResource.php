@@ -38,7 +38,6 @@ class TagResource extends Resource
                 TextInput::make('name')
                     ->label('Tag')
                     ->required()
-                    ->live()
                     ->afterStateUpdated(fn (Set $set, $state) =>
                         $set('slug', Str::slug($state))
                     )

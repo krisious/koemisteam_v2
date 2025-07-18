@@ -71,7 +71,7 @@ class SkillResource extends Resource
                     ->label('Warna Skill')
                     ->copyable()
                     ->copyMessage('Color code copied'),
-            ])
+            ])->defaultSort('name', 'asc')
             ->filters([
                 //
             ])
