@@ -19,6 +19,14 @@ class ProjectResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Post';
+
+    protected static ?string $navigationLabel = 'Projects';
+
+    protected static ?string $slug = 'project';
+
+    protected static ?string $label = 'Projects';
+
     public static function form(Form $form): Form
     {
         return $form
