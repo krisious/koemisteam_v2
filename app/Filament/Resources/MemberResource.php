@@ -43,6 +43,13 @@ class MemberResource extends Resource
                 Hidden::make('id_user'),
                 FileUpload::make('profile_picture')
                     ->label('Foto Profil')
+                    ->avatar()
+                    ->imageEditor()
+                    ->imageEditorAspectRatios([
+                        '16:9',
+                        '4:3',
+                        '1:1',
+                    ])
                     ->disk('public')
                     ->directory('profil')
                     ->visibility('public')
@@ -103,7 +110,7 @@ class MemberResource extends Resource
                         ? 'Kosongkan jika tidak ingin mengganti password' 
                         : null)
                     ->columnSpanFull(),
-                    
+
                 RichEditor::make('bio')
                     ->label('Bio')
                     ->columnSpanFull()

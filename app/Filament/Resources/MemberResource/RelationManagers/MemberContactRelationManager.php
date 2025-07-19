@@ -44,7 +44,18 @@ class MemberContactRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('name')
                     ->label('Jenis Kontak')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->default('N/A')
+                    ->formatStateUsing(function ($state, $record) {
+                        Log::info('Contact Name Debug:', [
+                            'record' => $record->toArray(),
+                            'contact' => $record->contact ? $record->contact->toArray() : null,
+                            'state' => $state,
+                            'id_contact' => $record->id_contact,
+                            'contact_exists' => Contact::where('id', $record->id_contact)->exists(),
+                        ]);
+                        return $state ?? 'N/A';
+                    }),
                 Tables\Columns\TextColumn::make('pivot.value')
                     ->label('URL')
                     ->sortable()
@@ -95,7 +106,6 @@ class MemberContactRelationManager extends RelationManager
                             ->downloadable()
                             ->required()
                             ->multiple(false)
-                            ->dehydrateStateUsing(fn ($state) => is_array($state) ? $state[0] : $state)
                             ->helperText(str('Cari ikon kontak di **fontawesome.com** agar semuanya seragam.')->inlineMarkdown()->toHtmlString()),
                     ])
                     ->action(function (array $data) {

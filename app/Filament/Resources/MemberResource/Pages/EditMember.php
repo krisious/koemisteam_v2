@@ -23,10 +23,6 @@ class EditMember extends EditRecord
     {
         $formState = $this->form->getRawState(); // Ambil semua state form
 
-        if (!isset($formState['user_name'], $formState['user_email'])) {
-            throw new \Exception('Field name atau email tidak tersedia.');
-        }
-
         // Update data User terlebih dahulu
         $user = $this->record->user;
         
@@ -36,18 +32,22 @@ class EditMember extends EditRecord
                 'email' => $formState['user_email'],
             ]);
 
-        if (!empty($formState['user_password'])) {
-            $user->update([
-                'password' => bcrypt($formState['user_password']),
-            ]);
+            if (!empty($formState['user_password'])) {
+                $user->update([
+                    'password' => bcrypt($formState['user_password']),
+                ]);
+            }
         }
-    }
 
         // Masukkan id_user ke dalam data Siswa
         $data['id_user'] = $user->id;
 
         // Hilangkan field yang tidak ada di tabel `siswas`
         unset($data['user_name'], $data['user_email'], $data['user_password']);
+
+        if (isset($data['profile_picture']) && is_array($data['profile_picture'])) {
+            $data['profile_picture'] = $data['profile_picture'][0] ?? null;
+        }
 
         return $data;
     }
