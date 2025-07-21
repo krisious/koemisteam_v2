@@ -11,6 +11,11 @@ class Member extends Model
 
     protected $guarded = [];
 
+    public function getNameAttribute()
+    {
+        return $this->user?->name ?? '-';
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'id_user', 'id');

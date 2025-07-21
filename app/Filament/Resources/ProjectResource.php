@@ -4,14 +4,27 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProjectResource\Pages;
 use App\Filament\Resources\ProjectResource\RelationManagers;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Project;
+use App\Models\Member;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Hidden;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Str;
 
 class ProjectResource extends Resource
 {
@@ -31,7 +44,69 @@ class ProjectResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Hidden::make('id_member')
+                    ->default(function () {
+                        $user = Auth::user();
+                        return Member::where('id_user', $user->id)->value('id');
+                    })
+                    ->default(fn () => optional(Member::where('id_user', Auth::id())->first())->id),
+                TextInput::make('nama_kreator')
+                    ->label('Kreator')
+                    ->disabled()
+                    ->dehydrated(false)
+                    ->columnSpanFull()
+                    ->default(function () {
+                        $user = Auth::user();
+                        return optional($user)->name;
+                    })
+                    ->afterStateHydrated(function (TextInput $component, $state, $record) {
+                        if ($record?->member?->user) {
+                            $component->state($record->member->user->name);
+                        }
+                    }),
+                Select::make('id_category')
+                    ->label('Kategori')
+                    ->relationship('category', 'name')
+                    ->required()
+                    ->searchable()
+                    ->preload()
+                    ->columnSpanFull(),
+                TextInput::make('title')
+                    ->label('Judul')
+                    ->required()
+                    ->columnSpanFull()
+                    ->afterStateUpdated(fn (Set $set, $state) =>
+                        $set('slug', Str::slug($state))
+                    ),
+                TextInput::make('slug')
+                    ->label('Slug')
+                    ->unique(ignoreRecord: true)
+                    ->required()
+                    ->disabled()
+                    ->dehydrated()
+                    ->columnSpanFull(),
+                FileUpload::make('thumbnail')
+                    ->label('Thumbnail')
+                    ->image()
+                    ->imageEditor()
+                    ->imageEditorAspectRatios([
+                        '16:9',
+                    ])
+                    ->disk('public')
+                    ->directory('blog')
+                    ->visibility('public')
+                    ->required()
+                    ->columnSpanFull(),
+                RichEditor::make('content')
+                    ->label('Konten')
+                    ->fileAttachmentsDisk('public')
+                    ->fileAttachmentsDirectory('blog')
+                    ->fileAttachmentsVisibility('public')
+                    ->required()
+                    ->columnSpanFull(),
+                Toggle::make('is_published')
+                    ->label('Status Publish')
+                    ->default(false)
             ]);
     }
 
@@ -39,17 +114,65 @@ class ProjectResource extends Resource
     {
         return $table
             ->columns([
-                //
-            ])
+                ImageColumn::make('thumbnail')
+                    ->label('Thumbnail'),
+                TextColumn::make('member.user.name')
+                    ->label('Kreator')
+                    ->copyable()
+                    ->copyMessage('Copied to clipboard!')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('category.name')
+                    ->label('Kategori')
+                    ->copyable()
+                    ->copyMessage('Copied to clipboard!')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('title')
+                    ->label('Judul')
+                    ->copyable()
+                    ->copyMessage('Copied to clipboard!')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('slug')
+                    ->label('Slug')
+                    ->copyable()
+                    ->copyMessage('Copied to clipboard!')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('is_published')
+                    ->label('Status')
+                    ->badge()
+                    ->formatStateUsing(fn ($state): string => match ((bool) $state) {
+                        true => 'Published',
+                        false => 'Draft',
+                    })
+                    ->color(fn ($state): string => match ((bool) $state) {
+                        true => 'success',
+                        false => 'warning',
+                    })
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('updated_at')
+                    ->label('Terakhir Diperbarui')
+                    ->dateTime()
+                    ->sortable()
+                    ->searchable(),
+            ])->defaultSort('created_at','asc')
             ->filters([
-                //
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ForceDeleteAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }
@@ -57,7 +180,9 @@ class ProjectResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\CollaboratorRelationManager::class,
+            RelationManagers\TagsRelationManager::class,
+            RelationManagers\LinkRelationManager::class,
         ];
     }
 

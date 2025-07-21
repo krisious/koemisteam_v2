@@ -46,7 +46,7 @@ class LinkResource extends Resource
                     ->visibility('public')
                     ->downloadable()
                     ->required()
-                    ->helperText(str('Cari ikon link di **fontawesome.com** agar semuanya seragam.')->inlineMarkdown()->toHtmlString())
+                    ->helperText(str('Pastikan gambar Icon memiliki **background transparan**.')->inlineMarkdown()->toHtmlString())
             ]);
     }
 

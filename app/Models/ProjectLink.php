@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class ProjectLink extends Model
+class ProjectLink extends Pivot
 {
     protected $table = 'project_links';
 

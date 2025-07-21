@@ -47,7 +47,8 @@ class SkillResource extends Resource
                     ->directory('skill')
                     ->visibility('public')
                     ->downloadable()
-                    ->required(),
+                    ->required()
+                    ->helperText(str('Pastikan gambar Icon memiliki **background transparan**.')->inlineMarkdown()->toHtmlString()),
                 ColorPicker::make('color')
                     ->label('Warna Skill')
                     ->regex('/^#([a-f0-9]{6}|[a-f0-9]{3})\b$/')

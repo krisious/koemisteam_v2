@@ -18,6 +18,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn; 
+use Filament\Tables\Columns\ImageColumn; 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
@@ -114,6 +115,16 @@ class MemberResource extends Resource
                 RichEditor::make('bio')
                     ->label('Bio')
                     ->columnSpanFull()
+                    ->toolbarButtons([
+                        'bold',
+                        'h2',
+                        'h3',
+                        'italic',
+                        'link',
+                        'redo',
+                        'underline',
+                        'undo',
+                    ])
             ]);
     }
 
@@ -121,6 +132,9 @@ class MemberResource extends Resource
     {
         return $table
             ->columns([
+                ImageColumn::make('profile_picture')
+                    ->label('Foto Profil')
+                    ->circular(),
                 TextColumn::make('user.name')
                     ->label('Nama Lengkap')
                     ->sortable()
@@ -141,7 +155,7 @@ class MemberResource extends Resource
                     ->label('Diperbarui Pada')
                     ->dateTime()
                     ->sortable(),
-            ])->defaultSort('user.name', 'desc')
+            ])->defaultSort('user.name', 'asc')
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
             ])

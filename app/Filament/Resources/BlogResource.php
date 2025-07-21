@@ -88,6 +88,10 @@ class BlogResource extends Resource
                 FileUpload::make('thumbnail')
                     ->label('Thumbnail')
                     ->image()
+                    ->imageEditor()
+                    ->imageEditorAspectRatios([
+                        '16:9',
+                    ])
                     ->disk('public')
                     ->directory('blog')
                     ->visibility('public')
@@ -95,6 +99,9 @@ class BlogResource extends Resource
                     ->columnSpanFull(),
                 RichEditor::make('content')
                     ->label('Konten')
+                    ->fileAttachmentsDisk('public')
+                    ->fileAttachmentsDirectory('blog')
+                    ->fileAttachmentsVisibility('public')
                     ->required()
                     ->columnSpanFull(),
                 Toggle::make('is_published')
@@ -109,7 +116,7 @@ class BlogResource extends Resource
             ->columns([
                 ImageColumn::make('thumbnail')
                     ->label('Thumbnail'),
-                TextColumn::make('member.name')
+                TextColumn::make('member.user.name')
                     ->label('Penulis')
                     ->copyable()
                     ->copyMessage('Copied to clipboard!')
@@ -133,7 +140,6 @@ class BlogResource extends Resource
                     ->copyMessage('Copied to clipboard!')
                     ->sortable()
                     ->searchable(),
-                ToggleColumn::make('is_published'),
                 TextColumn::make('is_published')
                     ->label('Status')
                     ->badge()
@@ -152,7 +158,7 @@ class BlogResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->searchable(),
-            ])
+            ])->defaultSort('created_at','asc')
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
             ])

@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Project extends Model
 {
+    use SoftDeletes;
+    
     protected $guarded = [];
 
     public function member()
@@ -15,7 +18,7 @@ class Project extends Model
 
     public function collaborator()
     {
-        return $this->belongsToMany(Member::class, 'project_members', 'id_project', 'id_member');
+        return $this->belongsToMany(Member::class, 'collaboration', 'id_project', 'id_member');
     }
 
     public function category()
