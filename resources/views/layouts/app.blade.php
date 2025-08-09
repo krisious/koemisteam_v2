@@ -19,6 +19,8 @@
         rel="stylesheet">
     <!-- <link href="{{asset('theme/css/sb-admin-2.min.css')}}" rel="stylesheet">
     <link href="{{asset('theme/vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet"> -->
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
 
     <link rel="icon" type="image/png" href="{{ asset('logo1 (2).png') }}" width="48px" height="48px">
 
@@ -28,14 +30,31 @@
         }
         .thick-line {
         height: 3px;
-        background-color: #9BADDA;
+        background-color: #444444;
         border: none; /* Remove default border */
+        }
+        .swiper-button-next,
+        .swiper-button-prev {
+            width: 30px;        /* default sekitar 44px */
+            height: 30px;       /* default sekitar 44px */
+            background-color: rgba(0, 0, 0, 0.3); /* opsional */
+            border-radius: 50%; /* opsional: buat jadi bulat */
+            backdrop-filter: blur(0.5px); /* efek blur latar belakang */
+        }
+
+        /* opsional: ubah ukuran ikon panah */
+        .swiper-button-next::after,
+        .swiper-button-prev::after {
+            font-size: 16px; /* default sekitar 20–24px */
+            color: white;    /* warna ikon */
         }
     </style>
 </head>
 
-<body id="page-top" style="background-color: #FAFAF6">
-    <div id="wrapper">
+<body id="page-top" class="bg-fixed bg-cover bg-center bg-no-repeat" style="background-image: url('/bg.jpg')">
+    <div class="fixed inset-0 bg-white/10 z-0"></div>
+
+    <div id="wrapper" class="relative z-10">
 
         <div id="content-wrapper" class="d-flex flex-column">
 
@@ -44,17 +63,16 @@
                 @include('layouts._header')
 
                 <div class="container-fluid" style="margin-top: 70px;">
-
+                        
                     @yield('content')
+                    @yield('scripts')
 
                 </div>
-
             </div>
 
             @include('layouts._footer')
 
         </div>
-
     </div>
 
     <!-- <a class="scroll-to-top rounded" href="#page-top">
@@ -62,12 +80,13 @@
     </a> -->
 
 
-    <script src="{{asset('theme/vendor/jquery/jquery.min.js')}}"></script>
+    <!-- <script src="{{asset('theme/vendor/jquery/jquery.min.js')}}"></script>
     <script src="{{asset('theme/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
     <script src="{{asset('theme/vendor/jquery-easing/jquery.easing.min.js')}}"></script>
     <script src="{{asset('theme/js/sb-admin-2.min.js')}}"></script>
     <script src="{{asset('theme/vendor/datatables/jquery.dataTables.min.js')}}"></script>
-    <script src="{{asset('theme/vendor/datatables/dataTables.bootstrap4.min.js')}}"></script>
+    <script src="{{asset('theme/vendor/datatables/dataTables.bootstrap4.min.js')}}"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
     @yield('script')
 

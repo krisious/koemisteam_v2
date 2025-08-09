@@ -1,51 +1,46 @@
 @extends('layouts.app')
 
-@section('title', 'Blog Page')
+@section('title', $card['title'] ?? 'Blog Detail')
 
 @section('content')
     <container class="flex flex-col p-15 ">
-        <!-- Head Content -->
         <div class="flex flex-col items-center">
             <h4 class="text-2xl text-center mt-auto">
-                Category
+                {{ $card['category'] ?? 'Category' }}
             </h4>
             <h1 class="text-5xl font-bold text-center mt-5">
-                Title
+                {{ $card['title'] ?? 'Title' }}
             </h1>
             <h4 class="text-2xl text-center mt-5">
-                Writer
-            </h1>
+                {{ $card['writer'] ?? 'Writer' }}
+            </h4>
             <h4 class="text-2xl text-center mt-5">
-                date, dd/mm/yyyy
-            </h4> 
+                {{ \Carbon\Carbon::parse($card['modified'])->format('d/m/Y') ?? 'dd/mm/yyyy' }}
+            </h4>
 
-            <!-- Image placeholder -->
-            <div class="w-auto h-auto mt-5 bg-[#9BADDA] p-8 rounded-lg text-[#FAFAF6] drop-shadow-[8px_8px_4px_rgba(107,114,158,100.25)]">
-                <img src="{{ asset('/Chat 1.png') }}">
+            <div class="w-auto h-auto mt-5 bg-[#9BADDA] p-8 rounded-lg text-[#FAFAF6] drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)]">
+                <img src="{{ asset($card['image'] ?? '/Chat 1.png') }}" alt="Blog Image" class="mx-auto">
             </div>
         </div>
-            
-        <!-- Body Content -->
+
         <p class="text-xl mt-10 text-justify">
-                Berawal dari perkumpulan tiga remaja dengan kelas mata kuliah yang sama dan akhirnya bertambah anggotanya menjadi 15 mahasiswa/i 
-                dengan sifat, passion dan sifat yang berbeda-beda. Dikenal sebagai Warkop Bubur Koemis yang berasal dari tempat kami berkumpul 
-                yaitu sebuah warung kopi dengan nama Bubur Kumis. Kami merupakan kumpulan mahasiswa/i dari program studi Sistem Informasi Fakultas 
-                Ilmu Komputer UPN Veteran Jakarta. Warkop Bubur Koemis atau BK kami jadikan sebagai wadah untuk berbagi cerita, pengalaman, canda, 
-                tawa, suka, duka, serta karya yang kami buat.
+            {!! $card['content'] ?? 'Konten belum tersedia.' !!}
         </p>
 
         <div class="justify-items-start mt-8">
             <h4 class="text-2xl font-bold">
                 Tags
             </h4>
-
-            <div class="flex w-auto text-[#FAFAF6] mt-3 drop-shadow-[8px_8px_4px_rgba(107,114,158,100.25)]">
-                <a class="mr-4 bg-[#9BADDA] py-2 px-5 rounded-lg ">
-                    text testing 1
-                </a>
-                <a class="mr-4 bg-[#9BADDA] py-2 px-5 rounded-lg">
-                    text 2
-                </a>
+            <div class="flex w-auto text-[#FAFAF6] mt-3 drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)] ">
+                @if(!empty($card['tags']))
+                    @foreach(explode(',', $card['tags']) as $tag)
+                        <a class="mr-4 bg-[#9BADDA] py-2 px-5 rounded-lg hover:bg-[#7690C3]">
+                            {{ trim($tag) }}
+                        </a>
+                    @endforeach
+                @else
+                    <span class="mr-4 bg-[#9BADDA] py-2 px-5 rounded-lg">No tags</span>
+                @endif
             </div>
         </div>
     </container>

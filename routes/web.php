@@ -13,10 +13,10 @@ Route::get('/', function () {
 Route::get('/landing-page', [LandingController::class, 'index'])->name('landing.index');
 
 Route::get('/blog-page', [BlogController::class, 'index'])->name('blog.index');
-Route::get('/blog-page/show', [BlogController::class, 'show'])->name('blog.show');
+Route::get('/blog-page/show/{id}', [BlogController::class, 'show'])->name('blog.show');
 
 Route::get('/project-page', [ProjectController::class, 'index'])->name('project.index');
-Route::get('/project-page/show', [ProjectController::class, 'show'])->name('project.show');
+Route::get('/project-page/show/{id}', [ProjectController::class, 'show'])->name('project.show');
 
 Route::get('/member-page', [MemberController::class, 'index'])->name('member.index');
-Route::get('/member-page/show', [MemberController::class, 'show'])->name('member.show');
+Route::get('/member-page/show/{id}', [MemberController::class, 'show'])->name('member.show');

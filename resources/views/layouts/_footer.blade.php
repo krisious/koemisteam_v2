@@ -1,4 +1,4 @@
-<footer class="sticky-footer bg-[#444444]">
+<footer class="sticky-footer bg-[#6B729E]">
     <div class="flex py-5 text-[#FAFAF6]">
         <div class="flex flex-col w-xl px-30 mr-auto">
             <a href="{{ route('landing.index') }}" class="py-3">HOME</a>
