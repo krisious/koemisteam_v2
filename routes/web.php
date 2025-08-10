@@ -7,7 +7,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\MemberController;
 
 Route::get('/', function () {
-    return view('landing_page/index');
+    return redirect()->route('landing.index');
 });
 
 Route::get('/landing-page', [LandingController::class, 'index'])->name('landing.index');

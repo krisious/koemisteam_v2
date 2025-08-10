@@ -16,7 +16,7 @@
                                 <h2 class="font-semibold">{{ $member['name'] }}</h2>
                                 <p class="text-sm text-gray-500">{{ $member['desc'] }}</p>
                                 <a href="{{ route('member.show', $member['id']) }}"
-                                   class="inline-block bg-[#9BADDA] text-[#FAFAF6] px-5 py-2 rounded-lg hover:bg-[#7690C3] transition drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)]">
+                                    class="inline-block bg-[#9BADDA] text-[#FAFAF6] px-5 py-2 rounded-lg hover:bg-[#7690C3] transition drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)]">
                                     Detail
                                 </a>
                             </div>

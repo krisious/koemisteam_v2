@@ -91,4 +91,3 @@ class BlogController extends Controller
         return view('blogs_page.show', compact('card'));
     }
 }
- 

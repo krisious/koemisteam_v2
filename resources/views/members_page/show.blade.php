@@ -30,6 +30,7 @@
                     <h3 class="text-3xl font-bold">
                         Contact
                     </h3>
+                    {{-- Contact --}}
                     <button class="flex bg-[#9BADDA] size-10 rounded-lg mt-3 place-items-center">
                         IG
                     </button>

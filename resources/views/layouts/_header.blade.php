@@ -60,7 +60,7 @@
         </li>
     </ul>
 
-    <a class="flex items-center ml-auto mr-8" href="/">
+    <a class="flex items-center ml-auto mr-8" href="{{ url(config('filament.path') ?? 'admin') }}">
         <span>Login</span>
         <i class="fa-solid fa-user ml-2" style="color: #7690C3;"></i>
     </a>
