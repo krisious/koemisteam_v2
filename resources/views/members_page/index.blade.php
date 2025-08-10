@@ -16,7 +16,7 @@
                             data-slug="{{ $member['slug'] }}">
                             <div class="bg-white p-4 rounded-4xl text-center transition-transform duration-300 transform hover:scale-105">
                                 {{-- Profile Picture from DB --}}
-                                <img src="{{ $member['img'] }}" alt="{{ $member['name'] }}">
+                                <img src="{{ $member['profile_picture'] }}" alt="{{ $member['name'] }}">
                             </div>
                         </div>
                     @endforeach
