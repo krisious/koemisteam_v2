@@ -161,6 +161,25 @@ class ProjectResource extends Resource
             ])->defaultSort('created_at','asc')
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\SelectFilter::make('id_kategori')
+                    ->label('Kategori')
+                    ->relationship(
+                        'category', 
+                        'name', 
+                        fn ($query) => $query->whereIn(
+                            'id', 
+                            \App\Models\Project::pluck('id_category')
+                        )
+                    )
+                    ->multiple()
+                    ->preload()
+                    ->searchable(),
+                Tables\Filters\SelectFilter::make('id_tag')
+                    ->label('Tag')
+                    ->relationship('tags', 'name', fn ($query) => $query->whereHas('project'))
+                    ->multiple()
+                    ->preload()
+                    ->searchable(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -193,5 +212,17 @@ class ProjectResource extends Resource
             'create' => Pages\CreateProject::route('/create'),
             'edit' => Pages\EditProject::route('/{record}/edit'),
         ];
+
+        if (Auth::check() && Auth::user()->hasRole('member')) {
+            $idMember = \App\Models\Member::where('id_user', Auth::user()->id)->value('id');
+
+            return $query->where(function ($q) use ($idMember) {
+                        $q->where('id_member', $idMember)
+                            ->orWhereHas('collaborator', function ($q2) use ($idMember) {
+                        $q2->where('id_member', $idMember);
+                    });
+                });
+            }
+        return $query;
     }
 }

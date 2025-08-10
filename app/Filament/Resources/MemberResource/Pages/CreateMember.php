@@ -28,7 +28,7 @@ class CreateMember extends CreateRecord
         $data['id_user'] = $user->id;
 
         // Hapus user_* dari data Member
-        unset($data['user_name'], $data['user_email'], $data['user_password']);
+        unset($data['user_name'], $data['user_email'], $data['user_password'], $data['roles']);
 
         // Pastikan profile_picture string, bukan array
         if (isset($data['profile_picture']) && is_array($data['profile_picture'])) {

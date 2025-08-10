@@ -22,7 +22,7 @@
     <!-- Swiper CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
 
-    <link rel="icon" type="image/png" href="{{ asset('logo1 (2).png') }}" width="48px" height="48px">
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}" width="48px" height="48px">
 
     <style>
         p, h1, h2, h3, h4, h5, h6, date {

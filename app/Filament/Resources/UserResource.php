@@ -18,7 +18,7 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
     protected static ?string $navigationGroup = 'User';
 
@@ -52,6 +52,11 @@ class UserResource extends Resource
                     ->copyMessage('Copied to Clipboard')
                     ->sortable()
                     ->searchable(),
+                TextColumn::make('roles.name')
+                    ->copyable()
+                    ->copyMessage('Copy to Clipboard')
+                    ->searchable()
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
