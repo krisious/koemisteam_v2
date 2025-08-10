@@ -52,6 +52,11 @@ class UserResource extends Resource
                     ->copyMessage('Copied to Clipboard')
                     ->sortable()
                     ->searchable(),
+                TextColumn::make('roles.name')
+                    ->copyable()
+                    ->copyMessage('Copy to Clipboard')
+                    ->searchable()
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

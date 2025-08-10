@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\MemberResource\Pages;
 use App\Filament\Resources\MemberResource\RelationManagers;
 use App\Models\Member;
+use Spatie\Permission\Models\Role;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
@@ -124,7 +125,21 @@ class MemberResource extends Resource
                         'redo',
                         'underline',
                         'undo',
-                    ])
+                    ]),
+
+                Select::make('roles')
+                    ->label('Roles')
+                    ->options(Role::pluck('name', 'id'))
+                    ->required()
+                    ->dehydrated(false) 
+                    ->default(fn () => [Role::where('name', 'member')->value('id')])
+                    ->afterStateHydrated(function ($component, $state, $record) {
+                        if ($record && $record->user) {
+                            $roleIds = $record->user->roles->pluck('id')->toArray();
+                            $component->state($roleIds ?: [Role::where('name', 'member')->value('id')]);
+                    }
+                    })
+                    ->disabled(),
             ]);
     }
 
