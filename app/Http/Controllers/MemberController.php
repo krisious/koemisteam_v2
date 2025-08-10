@@ -2,40 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Member;
 use Illuminate\Http\Request;
 
 class MemberController extends Controller
 {
     public function index()
     {
-        $members = [
-            ['id' => 1, 'name' => 'Ayu', 'desc' => 'Desainer UI', 'img' => '/bal.png'],
-            ['id' => 2, 'name' => 'Budi', 'desc' => 'Programmer', 'img' => 'img/budi.jpg'],
-            ['id' => 3, 'name' => 'Budi', 'desc' => 'Programmer', 'img' => 'img/budi.jpg'],
-            ['id' => 4, 'name' => 'Ayu', 'desc' => 'Desainer UI', 'img' => 'img/ayu.jpg'],
-            ['id' => 5, 'name' => 'Budi', 'desc' => 'Programmer', 'img' => 'img/budi.jpg'],
-            ['id' => 6, 'name' => 'Budi', 'desc' => 'Programmer', 'img' => 'img/budi.jpg'],
-            ['id' => 7, 'name' => 'Ayu', 'desc' => 'Desainer UI', 'img' => 'img/ayu.jpg'],
-            ['id' => 8, 'name' => 'Budi', 'desc' => 'Programmer', 'img' => 'img/budi.jpg'],
-            ['id' => 9, 'name' => 'Budi', 'desc' => 'Programmer', 'img' => 'img/budi.jpg'],
-            ['id' => 10, 'name' => 'Ayu', 'desc' => 'Desainer UI', 'img' => 'img/ayu.jpg'],
-            ['id' => 11, 'name' => 'Budi', 'desc' => 'Programmer', 'img' => 'img/budi.jpg'],
-            ['id' => 12, 'name' => 'Budi', 'desc' => 'Programmer', 'img' => 'img/budi.jpg'],
-            ['id' => 13, 'name' => 'Ayu', 'desc' => 'Desainer UI', 'img' => 'img/ayu.jpg'],
-            ['id' => 14, 'name' => 'Budi', 'desc' => 'Programmer', 'img' => 'img/budi.jpg'],
-            ['id' => 15, 'name' => 'Budi', 'desc' => 'Programmer', 'img' => 'img/budi.jpg'],
-        ];
-
-        // Bagi menjadi grup per 5 member
-        // $chunks = array_chunk($members, 5);
+        $members = Member::with('user')
+            ->select('id', 'id_user', 'slug', 'profile_picture', 'bio')
+            ->get()
+            ->map(function ($member) {
+                return [
+                    'name' => $member->user->name ?? 'Unknown', // dari tabel user
+                    'img' => $member->profile_picture 
+                        ? asset('storage/' . $member->profile_picture) 
+                        : asset('images/default-profile.jpg'),
+                    'slug' => $member->slug,
+                    'bio' => $member->bio,
+                ];
+            });
 
         return view('members_page.index', compact('members'));
+        // Bagi menjadi grup per 5 member
+        // $chunks = array_chunk($members, 5);
     }
+        
 
     public function show(Request $request)
     {
         // misalnya ambil data berdasarkan query ?id=1
-        $id = $request->get('id');
+        $id = $request->get('slug');
 
         $member = [
             'id' => $id,

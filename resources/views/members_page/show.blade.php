@@ -8,9 +8,11 @@
         <div class="flex">
             <div class="flex-1 grid gap-4">
                 <div>
+                    {{-- Name from DB --}}
                     <h1 class="text-5xl font-bold mb-5">
                         Name
                     </h1>
+                    {{-- Bio from DB --}}
                     <p class="text-xl text-justify">
                         Kami adalah kolaborasi dari para kreator yang percaya bahwa setiap proses layak untuk diceritakan. 
                         Website ini menjadi ruang untuk mengenal siapa kami, mengapa kami terbentuk, dan karya apa yang telah kami hasilkan.
@@ -31,12 +33,11 @@
                         Contact
                     </h3>
                     {{-- Contact --}}
-                    <button class="flex bg-[#9BADDA] size-10 rounded-lg mt-3 place-items-center">
-                        IG
-                    </button>
+                    
                 </div>                
             </div>
             <container class="flex ml-15 bg-white p-4 pb-10 rounded-4xl drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)]">
+                {{-- Profile Picture from DB --}}
                 <img src="{{ asset('/bal.png') }}" class="w-auto h-120 rounded-3xl mx-auto mb-2 bg-[#9BADDA]" />
             </container>
         </div>
@@ -48,12 +49,8 @@
             </h3>
 
             <div class="flex w-auto text-[#FAFAF6] mt-3 drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)]">
-                <a class="mr-4 bg-[#9BADDA] py-2 px-5 rounded-lg">
-                    text 1
-                </a>
-                <a class="mr-4 bg-[#9BADDA] py-2 px-5 rounded-lg">
-                    text testing 2
-                </a>
+                {{-- Skill Set form DB --}}
+                
             </div>
         </div>        
     </container>
@@ -77,7 +74,7 @@
                 Blog
             </h3>
             <hr class="thick-line px-16 mt-5 mb-10">
-            <!-- Content -->
+            <!-- Blog Content -->
             <div class="flex flex-wrap gap-10 z-0 justify-center">
                 @foreach ($cards as $index => $card)
                     <div class="flex flex-col max-w-sm drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)] basis-1/4 group cursor-pointer hover:bg-white/50 rounded-xl">
@@ -144,7 +141,7 @@
                 Project
             </h1>
             <hr class="thick-line px-16 mt-5">
-            <!-- Content -->
+            <!-- Project Content -->
             <div class="flex flex-wrap gap-10 z-0 justify-center mt-10">
                 @foreach ($cards as $index => $card)
                     <div class="flex flex-col max-w-sm drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)] basis-1/4 group cursor-pointer hover:bg-white/50 rounded-xl">

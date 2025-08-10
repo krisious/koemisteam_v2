@@ -19,4 +19,4 @@ Route::get('/project-page', [ProjectController::class, 'index'])->name('project.
 Route::get('/project-page/show/{id}', [ProjectController::class, 'show'])->name('project.show');
 
 Route::get('/member-page', [MemberController::class, 'index'])->name('member.index');
-Route::get('/member-page/show/{id}', [MemberController::class, 'show'])->name('member.show');
+Route::get('/member-page/show/{slug}', [MemberController::class, 'show'])->name('member.show');
