@@ -5,7 +5,9 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\MemberResource\Pages;
 use App\Filament\Resources\MemberResource\RelationManagers;
 use App\Models\Member;
+use App\Models\User;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
@@ -28,11 +30,19 @@ class MemberResource extends Resource
 {
     protected static ?string $model = Member::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
     protected static ?string $navigationGroup = 'User';
 
-    protected static ?string $navigationLabel = 'Members';
+    // protected static ?string $navigationLabel = 'Members';
+
+    public static function getNavigationLabel(): string
+    {
+        if (Auth::check() && Auth::user()->hasRole('member')) {
+            return 'Profile';
+        }
+        return 'Members';
+    }
 
     protected static ?string $slug = 'member';
 
