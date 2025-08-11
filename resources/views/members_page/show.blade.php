@@ -35,7 +35,7 @@
 
         <!-- Profile Picture -->
         <container class="flex ml-15 bg-white p-4 pb-10 rounded-4xl drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)]">
-            <img src="{{ $member['profile_picture'] }}" alt="{{ $member['name'] }}" class="w-auto h-120 rounded-3xl mx-auto mb-2 bg-[#9BADDA]">
+            <img src="{{ $member['profile_picture_url'] }}" alt="{{ $member['name'] }}" class="w-auto h-120 rounded-3xl mx-auto mb-2 bg-[#9BADDA]">
         </container>
     </div>
 

@@ -17,7 +17,9 @@ class MemberController extends Controller
             ->map(function ($member) {
                 return [
                     'name' => $member->user->name ?? 'Unknown', // dari tabel user
-                    'profile_picture' => $member->profile_picture,  
+                    'profile_picture' => $member->profile_picture
+                        ? asset('storage/' . $member->profile_picture) 
+                        : asset('default-profile.png'),
                     'slug' => $member->slug,
                     'bio' => $member->bio,
                 ];
@@ -38,6 +40,12 @@ class MemberController extends Controller
                 'memberSkill',   // relasi ke member_skills
             ])
             ->firstOrFail();
+
+        if ($member->profile_picture) {
+            $member->profile_picture_url = asset('storage/' . $member->profile_picture);
+        } else {
+            $member->profile_picture_url = asset('images/default-profile.png'); // fallback
+        }
 
         // Ambil blog yang dikerjakan oleh member ini
         $blogs = Blog::where('id_member', $member->id)

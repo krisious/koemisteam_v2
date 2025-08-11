@@ -3,74 +3,81 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Blog;
+use App\Models\Category;
+use App\Models\Tag;
+use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
     public function index(Request $request)
     {
-        // Data dummy manual
-        $cards = [
-            ['id' => 0, 'title' => 'SPK Siswa Teladan Metode TOPSIS (SMK Negeri 8 Jakarta)', 'category' => 'Education', 'tags' => 'SPK, TOPSIS', 'modified' => '2025-08-01'],
-            ['id' => 1, 'title' => 'Judul Artikel 2', 'category' => 'Teknologi', 'tags' => 'AI, Machine Learning', 'modified' => '2025-07-28'],
-            ['id' => 2, 'title' => 'Judul Artikel 3', 'category' => 'Bisnis', 'tags' => 'Marketing, Sales', 'modified' => '2025-07-20'],
-            ['id' => 3, 'title' => 'Judul Artikel 4', 'category' => 'Kesehatan', 'tags' => 'Wellness, Nutrition', 'modified' => '2025-07-18'],
-            ['id' => 4, 'title' => 'Judul Artikel 5', 'category' => 'Seni', 'tags' => 'Design, Painting', 'modified' => '2025-07-15'],
-            ['id' => 5, 'title' => 'Judul Artikel 6', 'category' => 'Olahraga', 'tags' => 'Football, Training', 'modified' => '2025-07-12'],
-            ['id' => 6, 'title' => 'Judul Artikel 7', 'category' => 'Musik', 'tags' => 'Jazz, Rock', 'modified' => '2025-07-10'],
-            ['id' => 7, 'title' => 'Judul Artikel 8', 'category' => 'Travel', 'tags' => 'Adventure, Tips', 'modified' => '2025-07-05'],
-            ['id' => 8, 'title' => 'Judul Artikel 9', 'category' => 'Fashion', 'tags' => 'Style, Trends, Sales', 'modified' => '2025-07-01'],
-        ];
+        $search = $request->get('search');
+        $filterCategory = $request->get('filter_category', []); // array
+        $filterTag = $request->get('filter_tag', []); // array
+        $filterModified = $request->get('filter_modified');
 
-        // Ambil input dari request
-        $search = strtolower($request->input('search', ''));
-        $filterModified = $request->input('filter_modified', '');
-        $filterCategory = $request->input('filter_category', '');
-        $filterTag = $request->input('filter_tag', '');
+        // Query awal: hanya blog yang dipublish
+        $query = Blog::with(['category', 'tags'])
+            ->where('is_published', true);
 
-        // Filter berdasarkan search (judul)
+        // Search filter
         if ($search) {
-            $cards = array_filter($cards, function($card) use ($search) {
-                return strpos(strtolower($card['title']), $search) !== false;
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('content', 'like', "%{$search}%");
             });
         }
 
-        // Filter berdasarkan Modified
-        if ($filterModified == 'latest') {
-            usort($cards, fn($a, $b) => strcmp($b['modified'], $a['modified']));
-        } elseif ($filterModified == 'oldest') {
-            usort($cards, fn($a, $b) => strcmp($a['modified'], $b['modified']));
+        // Filter kategori (multiple)
+        if (!empty($filterCategory)) {
+            $query->whereIn('id_category', $filterCategory);
         }
 
-        // Filter berdasarkan Category
-        if ($filterCategory) {
-            $cards = array_filter($cards, fn($card) => strtolower($card['category']) === strtolower($filterCategory));
+        // Filter tag (multiple)
+        if (!empty($filterTag)) {
+            $query->whereHas('tags', function ($q) use ($filterTag) {
+                $q->whereIn('tags.id', $filterTag);
+            });
         }
 
-        // Filter berdasarkan Tag
-        if ($filterTag) {
-            $cards = array_filter($cards, fn($card) => stripos($card['tags'], $filterTag) !== false);
+        // Sort by modified date
+        if ($filterModified === 'latest') {
+            $query->orderBy('updated_at', 'desc');
+        } elseif ($filterModified === 'oldest') {
+            $query->orderBy('updated_at', 'asc');
         }
 
-        // Reset index setelah filter
-        $cards = array_values($cards);
+        // Ambil data blog paginated
+        $blogs = $query->paginate(6)->appends($request->all());
 
-        // Pagination
-        $perPage = 8;
-        $currentPage = $request->get('page', 1);
-        $total = count($cards);
-        $totalPages = ceil($total / $perPage);
-        $start = ($currentPage - 1) * $perPage;
-        $cardsToShow = array_slice($cards, $start, $perPage);
+        // Data untuk card view
+        $cards = $blogs->map(function ($blog) {
+            return [
+                'id' => $blog->id,
+                'title' => $blog->title,
+                'category' => $blog->category ? $blog->category->name : 'Uncategorized',
+                'tags' => $blog->tags->pluck('name')->implode(', '),
+                'modified' => $blog->created_at,
+                'thumbnail' => $blog->thumbnail 
+                    ? asset('storage/' . $blog->thumbnail) 
+                    : asset('bg-blog.png'), // fallback
+            ];
+        });
+
+        // Daftar kategori & tag untuk filter
+        $categories = Category::orderBy('name')->get();
+        $tags = Tag::orderBy('name')->get();
 
         return view('blogs_page.index', [
-            'cards' => $cardsToShow,
-            'totalPages' => $totalPages,
-            'currentPage' => $currentPage,
-            'startIndex' => $start,
+            'blogs' => $blogs,
+            'cards' => $cards,
             'search' => $search,
-            'filterModified' => $filterModified,
             'filterCategory' => $filterCategory,
             'filterTag' => $filterTag,
+            'filterModified' => $filterModified,
+            'categories' => $categories,
+            'tags' => $tags,
         ]);
     }
 
