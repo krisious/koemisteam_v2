@@ -13,88 +13,108 @@ class BlogController extends Controller
     public function index(Request $request)
     {
         $search = $request->get('search');
-        $filterCategory = $request->get('filter_category', []); // array
-        $filterTag = $request->get('filter_tag', []); // array
+        $filterCategorySlug = (array) $request->get('filter_category', []);
+        $filterTagSlug = (array) $request->get('filter_tag', []);
         $filterModified = $request->get('filter_modified');
 
-        // Query awal: hanya blog yang dipublish
-        $query = Blog::with(['category', 'tags'])
-            ->where('is_published', true);
+        // Convert slug ke ID untuk query
+        $filterCategory = Category::whereIn('slug', $filterCategorySlug)->pluck('id')->toArray();
+        $filterTag = Tag::whereIn('slug', $filterTagSlug)->pluck('id')->toArray();
 
-        // Search filter
+        $query = Blog::with(['category', 'tags'])
+            ->where('is_published', true)
+            ->orderBy('created_at', 'desc');
+
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                    ->orWhere('content', 'like', "%{$search}%");
+                ->orWhere('content', 'like', "%{$search}%");
             });
         }
 
-        // Filter kategori (multiple)
         if (!empty($filterCategory)) {
             $query->whereIn('id_category', $filterCategory);
         }
 
-        // Filter tag (multiple)
         if (!empty($filterTag)) {
             $query->whereHas('tags', function ($q) use ($filterTag) {
                 $q->whereIn('tags.id', $filterTag);
             });
         }
 
-        // Sort by modified date
         if ($filterModified === 'latest') {
             $query->orderBy('updated_at', 'desc');
         } elseif ($filterModified === 'oldest') {
             $query->orderBy('updated_at', 'asc');
         }
 
-        // Ambil data blog paginated
         $blogs = $query->paginate(6)->appends($request->all());
 
-        // Data untuk card view
         $cards = $blogs->map(function ($blog) {
             return [
                 'id' => $blog->id,
+                'slug' => $blog->slug,
                 'title' => $blog->title,
                 'category' => $blog->category ? $blog->category->name : 'Uncategorized',
                 'tags' => $blog->tags->pluck('name')->implode(', '),
                 'modified' => $blog->created_at,
                 'thumbnail' => $blog->thumbnail 
                     ? asset('storage/' . $blog->thumbnail) 
-                    : asset('bg-blog.png'), // fallback
+                    : asset('bg-blog.png'),
             ];
         });
 
-        // Daftar kategori & tag untuk filter
-        $categories = Category::orderBy('name')->get();
-        $tags = Tag::orderBy('name')->get();
+        // Ambil kategori & tag yang dipakai blog published saja
+        $categories = Category::whereHas('blog', function ($q) {
+            $q->where('is_published', true);
+        })->orderBy('name')->get();
+
+        $tags = Tag::whereHas('blog', function ($q) {
+            $q->where('is_published', true);
+        })->orderBy('name')->get();
+
+        // Ambil nama yang dipilih untuk summary di tombol
+        $selectedCategoryNames = $categories->whereIn('slug', $filterCategorySlug)->pluck('name')->toArray();
+        $selectedTagNames = $tags->whereIn('slug', $filterTagSlug)->pluck('name')->toArray();
 
         return view('blogs_page.index', [
             'blogs' => $blogs,
             'cards' => $cards,
             'search' => $search,
-            'filterCategory' => $filterCategory,
-            'filterTag' => $filterTag,
             'filterModified' => $filterModified,
             'categories' => $categories,
             'tags' => $tags,
+            'selectedCategories' => $filterCategorySlug, // slug
+            'selectedTags' => $filterTagSlug, // slug
+            'selectedCategoryNames' => $selectedCategoryNames,
+            'selectedTagNames' => $selectedTagNames,
         ]);
     }
 
-    public function show($id)
+
+    public function show($slug)
     {
-        $cards = [
-            ['id' => 0, 'title' => 'SPK Siswa Teladan Metode TOPSIS (SMK Negeri 8 Jakarta)', 'category' => 'Education', 'tags' => 'SPK, TOPSIS', 'modified' => '2025-08-01', 'writer' => 'John Doe', 'image' => '/Chat 1.png', 'content' => 'Berawal dari perkumpulan tiga remaja...'],
-            ['id' => 1, 'title' => 'Judul Artikel 2', 'category' => 'Teknologi', 'tags' => 'AI, Machine Learning', 'modified' => '2025-07-28', 'writer' => 'Jane Smith', 'image' => '/Chat 2.png', 'content' => 'Isi konten artikel 2...'],
-            // ... tambahkan data lain sesuai kebutuhan
+       // Ambil blog berdasarkan slug + relasi category, tags, dan member
+        $blog = Blog::with(['category', 'tags', 'member'])
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        $card = [
+            'id'        => $blog->id,
+            'slug'      => $blog->slug,
+            'title'     => $blog->title,
+            // Ambil writer dari relasi member (pastikan relasi 'member' ada di model Blog)
+            'writer'    => $blog->member->name ?? 'Unknown',
+            'category'  => $blog->category->name ?? 'No category',
+            'tags'      => $blog->tags->pluck('name')->implode(', '),
+            // Map path image ke storage
+            'image'     => $blog->image ? asset('storage/'.$blog->image) : '/Chat 1.png',
+            'thumbnail' => $blog->thumbnail ? asset('storage/'.$blog->thumbnail) : '',
+            'modified'  => $blog->updated_at,
+            'content'   => $blog->content ?? '',
         ];
-
-        $card = collect($cards)->firstWhere('id', $id);
-
-        if (!$card) {
-            abort(404);
-        }
 
         return view('blogs_page.show', compact('card'));
     }
+
 }

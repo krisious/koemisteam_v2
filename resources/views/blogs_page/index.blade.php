@@ -3,16 +3,6 @@
 @section('title', 'Blog Page')
 
 @section('content')
-@php
-    // normalisasi selected values jadi array of ids
-    $selectedCategories = is_array($filterCategory) ? $filterCategory : (empty($filterCategory) ? [] : [$filterCategory]);
-    $selectedTags = is_array($filterTag) ? $filterTag : (empty($filterTag) ? [] : [$filterTag]);
-
-    // get names for initial button label
-    $selectedCategoryNames = $categories->whereIn('id', $selectedCategories)->pluck('name')->toArray();
-    $selectedTagNames = $tags->whereIn('id', $selectedTags)->pluck('name')->toArray();
-@endphp
-
 <div>
     <!-- Hero Section -->
     <div class="relative flex items-center bg-cover bg-center bg-no-repeat h-[40rem]" 
@@ -68,7 +58,9 @@
                     <div class="relative">
                         <button type="button" id="catBtn" onclick="toggleDropdown('ddCategory')" class="flex items-center gap-2 px-4 py-2 rounded-md bg-[#9BADDA] text-white hover:bg-[#7f94c4]">
                             Category
-                            <span id="catSummary" class="text-sm ml-2 opacity-90" style="color: #FAFAF6;">{{ count($selectedCategoryNames) ? implode(', ', array_slice($selectedCategoryNames,0,3)) . (count($selectedCategoryNames) > 3 ? '...' : '') : 'All' }}</span>
+                            <span id="catSummary" class="text-sm ml-2 opacity-90" style="color: #FAFAF6">
+                                {{ count($selectedCategoryNames) ? implode(', ', array_slice($selectedCategoryNames,0,3)) . (count($selectedCategoryNames) > 3 ? '...' : '') : 'All' }}
+                            </span>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </button>
 
@@ -76,10 +68,10 @@
                             <div class="max-h-48 overflow-auto p-2 space-y-1">
                                 @foreach ($categories as $category)
                                     <label class="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-50">
-                                        <input type="checkbox" name="filter_category[]" value="{{ $category->id }}"
+                                        <input type="checkbox" name="filter_category[]" value="{{ $category->slug }}"
                                             data-name="{{ $category->name }}"
                                             class="cat-checkbox"
-                                            {{ in_array($category->id, $selectedCategories) ? 'checked' : '' }}>
+                                            {{ in_array($category->slug, $selectedCategories) ? 'checked' : '' }}>
                                         <span class="text-sm">{{ $category->name }}</span>
                                     </label>
                                 @endforeach
@@ -99,7 +91,9 @@
                     <div class="relative">
                         <button type="button" id="tagBtn" onclick="toggleDropdown('ddTags')" class="flex items-center gap-2 px-4 py-2 rounded-md bg-[#9BADDA] text-white hover:bg-[#7f94c4]">
                             Tags
-                            <span id="tagSummary" class="text-sm ml-2 opacity-90" style="color: #FAFAF6;">{{ count($selectedTagNames) ? implode(', ', array_slice($selectedTagNames,0,3)) . (count($selectedTagNames) > 3 ? '...' : '') : 'All' }}</span>
+                            <span id="tagSummary" class="text-sm ml-2 opacity-90" style="color: #FAFAF6">
+                                {{ count($selectedTagNames) ? implode(', ', array_slice($selectedTagNames,0,3)) . (count($selectedTagNames) > 3 ? '...' : '') : 'All' }}
+                            </span>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </button>
 
@@ -107,10 +101,10 @@
                             <div class="max-h-48 overflow-auto p-2 space-y-1">
                                 @foreach ($tags as $tag)
                                     <label class="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-50">
-                                        <input type="checkbox" name="filter_tag[]" value="{{ $tag->id }}"
+                                        <input type="checkbox" name="filter_tag[]" value="{{ $tag->slug }}"
                                             data-name="{{ $tag->name }}"
                                             class="tag-checkbox"
-                                            {{ in_array($tag->id, $selectedTags) ? 'checked' : '' }}>
+                                            {{ in_array($tag->slug, $selectedTags) ? 'checked' : '' }}>
                                         <span class="text-sm">{{ $tag->name }}</span>
                                     </label>
                                 @endforeach
@@ -137,9 +131,9 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach ($cards as $card)
                     <article class="bg-white rounded-xl overflow-hidden shadow group">
-                        <a href="{{ route('blog.show', ['id' => $card['id']]) }}" class="block">
+                        <a href="{{ route('blog.show', ['slug' => $card['slug']]) }}" class="block">
                             <div class="h-56 overflow-hidden relative">
-                                <img src="{{ asset($card['thumbnail']) }}" alt="{{ $card['title'] }}" class="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105" />
+                                <img src="{{ $card['thumbnail'] }}" alt="{{ $card['title'] }}" class="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105" />
                             </div>
                             <div class="p-5">
                                 <time class="text-sm text-gray-500">{{ \Carbon\Carbon::parse($card['modified'])->format('d M Y') }}</time>
@@ -171,7 +165,6 @@
 
 @section('scripts')
 <script>
-    // Toggle a dropdown by id, and close others
     function toggleDropdown(id) {
         ['ddSort','ddCategory','ddTags'].forEach(k => {
             if (k !== id) document.getElementById(k)?.classList.add('hidden');
@@ -179,10 +172,8 @@
         document.getElementById(id)?.classList.toggle('hidden');
     }
 
-    // Close dropdowns on outside click
     document.addEventListener('click', function(e) {
         const dropdowns = ['ddSort','ddCategory','ddTags'];
-        // if click is inside any button or dropdown, do nothing
         const inside = dropdowns.some(id => {
             const el = document.getElementById(id);
             const btn = document.querySelector(`[onclick="toggleDropdown('${id}')"]`);
@@ -193,49 +184,29 @@
         }
     });
 
-    // Submit the filter form
     function submitFilter() {
         document.getElementById('filterForm').submit();
     }
 
-    // Clear selection for checkboxes of given class and update summary
     function clearSelection(checkboxClass) {
         document.querySelectorAll('.' + checkboxClass).forEach(cb => cb.checked = false);
         updateSummaries();
     }
 
-    // Update button summary text for categories & tags
     function updateSummaries() {
-        // categories
         const catChecks = Array.from(document.querySelectorAll('.cat-checkbox'));
         const selectedCats = catChecks.filter(c => c.checked).map(c => c.dataset.name);
         const catSummary = document.getElementById('catSummary');
-        if (selectedCats.length === 0) {
-            catSummary.textContent = 'All';
-        } else if (selectedCats.length <= 3) {
-            catSummary.textContent = selectedCats.join(', ');
-        } else {
-            catSummary.textContent = selectedCats.slice(0,3).join(', ') + '...';
-        }
+        catSummary.textContent = selectedCats.length === 0 ? 'All' : (selectedCats.length <= 3 ? selectedCats.join(', ') : selectedCats.slice(0,3).join(', ') + '...');
 
-        // tags
         const tagChecks = Array.from(document.querySelectorAll('.tag-checkbox'));
         const selectedTags = tagChecks.filter(c => c.checked).map(c => c.dataset.name);
         const tagSummary = document.getElementById('tagSummary');
-        if (selectedTags.length === 0) {
-            tagSummary.textContent = 'All';
-        } else if (selectedTags.length <= 3) {
-            tagSummary.textContent = selectedTags.join(', ');
-        } else {
-            tagSummary.textContent = selectedTags.slice(0,3).join(', ') + '...';
-        }
+        tagSummary.textContent = selectedTags.length === 0 ? 'All' : (selectedTags.length <= 3 ? selectedTags.join(', ') : selectedTags.slice(0,3).join(', ') + '...');
     }
 
-    // initialize summaries on load
     document.addEventListener('DOMContentLoaded', function() {
         updateSummaries();
-
-        // also update summaries when user toggles checkbox without applying
         document.querySelectorAll('.cat-checkbox, .tag-checkbox').forEach(cb => {
             cb.addEventListener('change', updateSummaries);
         });
