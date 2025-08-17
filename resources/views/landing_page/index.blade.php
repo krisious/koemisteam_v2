@@ -19,15 +19,15 @@
                 </p>
                 <div class="flex text-center drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)] text-[#FAFAF6] mt-10">
                     <div class="bg-[#9BADDA] w-32 mr-8 px-5 py-2 rounded-xl">
-                        <p class="font-bold text-xl -mb-2">15</p>
+                        <p class="font-bold text-xl -mb-2">{{ $membersCount }}</p>
                         <div>Members</div>
                     </div>
                     <div class="bg-[#9BADDA] w-32 mr-8 px-5 py-2 rounded-xl">
-                        <p class="font-bold text-xl -mb-2">99+</p>
+                        <p class="font-bold text-xl -mb-2">{{ $blogsCount }}</p>
                         <div>Stories</div>
                     </div>
                     <div class="bg-[#9BADDA] w-32 px-5 py-2 rounded-xl">
-                        <p class="font-bold text-xl -mb-2">30</p>
+                        <p class="font-bold text-xl -mb-2">{{ $projectsCount }}</p>
                         <div>Projects</div>
                     </div>
                 </div>
@@ -180,19 +180,13 @@
                 Semua terangkum untuk mendekatkan kami dengan kamu.
             </p>
 
+            {{-- Blog thumbnail from DB --}}
             <div class="flex mt-10">
-                <div class="bg-[#9BADDA] w-2xs h-[11rem] mr-10 rounded-xl drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)] overflow-hidden relative">
-                    <img src="{{ asset('/gambar.jpg') }}" class="absolute inset-0 object-cover w-full h-full" />
-                </div>
-                <div class="bg-[#9BADDA] w-2xs h-[11rem] mr-10 rounded-xl drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)] overflow-hidden relative">
-                    <img src="{{ asset('/gambar.jpg') }}" class="absolute inset-0 object-cover w-full h-full" />
-                </div>
-                <div class="bg-[#9BADDA] w-2xs h-[11rem] mr-10 rounded-xl drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)] overflow-hidden relative">
-                    <img src="{{ asset('/gambar.jpg') }}" class="absolute inset-0 object-cover w-full h-full" />
-                </div>
-                <div class="bg-[#9BADDA] w-2xs h-[11rem] rounded-xl drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)] overflow-hidden relative">
-                    <img src="{{ asset('/gambar.jpg') }}" class="absolute inset-0 object-cover w-full h-full" />
-                </div>
+                @foreach($latestBlogs as $blog)
+                    <div class="bg-[#9BADDA] w-2xs h-[11rem] mr-10 rounded-xl drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)] overflow-hidden relative">
+                        <img src="{{ asset('storage/'.$blog->thumbnail) }}" class="absolute inset-0 object-cover w-full h-full" />
+                    </div>
+                @endforeach
             </div>
 
             <!-- Button -->
@@ -218,16 +212,13 @@
                     <button class="mt-10 bg-[#9BADDA] px-6 py-3 rounded-xl text-[#FAFAF6] drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)] hover:bg-[#7690C3] transition">
                         <a href="{{ route('project.index') }}">Show More</a>
                     </button>
+                    {{-- Project thumbnail from DB --}}
                     <div class="flex mt-10 max-w-3xl -translate-x-45">
-                        <div class="bg-[#9BADDA] w-[14rem] h-[8rem] mr-10 px-8 py-3 rounded-xl drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)] overflow-hidden relative">
-                            <img src="{{ asset('/gambar.jpg') }}" class="absolute inset-0 object-cover w-full h-full" />
-                        </div>
-                        <div class="bg-[#9BADDA] w-[14rem] h-[8rem] mr-10 px-8 py-3 rounded-xl drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)] overflow-hidden relative">
-                            <img src="{{ asset('/gambar.jpg') }}" class="absolute inset-0 object-cover w-full h-full" />
-                        </div>
-                        <div class="bg-[#9BADDA] w-[14rem] h-[8rem] px-8 py-3 rounded-xl drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)] overflow-hidden relative">
-                            <img src="{{ asset('/gambar.jpg') }}" class="absolute inset-0 object-cover w-full h-full" />
-                        </div>
+                        @foreach($latestProjects as $project)
+                            <div class="bg-[#9BADDA] w-[14rem] h-[8rem] mr-10 px-8 py-3 rounded-xl drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)] overflow-hidden relative">
+                                <img src="{{ asset('storage/'.$project->thumbnail) }}" class="absolute inset-0 object-cover w-full h-full" />
+                            </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
