@@ -13,14 +13,14 @@ class LandingController extends Controller
     {
         // Hitung jumlah member, blog, project
         $membersCount = Member::count();
-        $blogsCount = Blog::count();
-        $projectsCount = Project::count();
+        $blogsCount = Blog::where('is_published', true)->count();
+        $projectsCount = Project::where('is_published', true)->count();
 
         // Ambil 4 blog terbaru untuk thumbnail
-        $latestBlogs = Blog::latest()->take(4)->get();
+        $latestBlogs = Blog::where('is_published', true)->latest()->take(4)->get();
 
         // Ambil 3 project terbaru untuk thumbnail
-        $latestProjects = Project::latest()->take(3)->get();
+        $latestProjects = Project::where('is_published', true)->latest()->take(3)->get();
 
         return view('landing_page.index', compact(
             'membersCount',
