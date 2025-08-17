@@ -35,7 +35,7 @@
 
         <!-- Profile Picture -->
         <container class="flex ml-15 bg-white p-4 pb-10 rounded-4xl drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)]">
-            <img src="{{ $member['profile_picture'] }}" alt="{{ $member['name'] }}" class="w-auto h-120 rounded-3xl mx-auto mb-2 bg-[#9BADDA]">
+            <img src="{{ $member['profile_picture_url'] }}" alt="{{ $member['name'] }}" class="w-auto h-120 rounded-3xl mx-auto mb-2 bg-[#9BADDA]">
         </container>
     </div>
 
@@ -103,7 +103,7 @@
             <div class="flex justify-center items-center space-x-2 my-10">
                 @for ($page = 1; $page <= $totalBlogPages; $page++)
                     <a href="?blog_page={{ $page }}&project_page={{ $currentProjectPage }}"
-                       class="px-4 py-2 border rounded {{ $page == $currentBlogPage ? 'bg-[#9CADDA] text-white' : 'bg-white text-[#9CADDA] hover:bg-[#9CADDA]/20' }}">
+                    class="px-4 py-2 border rounded {{ $page == $currentBlogPage ? 'bg-[#9CADDA] text-white' : 'bg-white text-[#9CADDA] hover:bg-[#9CADDA]/20' }}">
                         {{ $page }}
                     </a>
                 @endfor
@@ -122,7 +122,7 @@
                     <a href="{{ route('project.show', $project->slug) }}">
                         <div class="h-[14rem] relative overflow-hidden rounded-t-xl">
                             <img src="{{ $project->thumbnail ? asset('storage/'.$project->thumbnail) : asset('/bg-project.png') }}" 
-                                 class="absolute inset-0 object-cover w-full h-full transition-transform duration-300 group-hover:scale-110 group-hover:brightness-90" />
+                                class="absolute inset-0 object-cover w-full h-full transition-transform duration-300 group-hover:scale-110 group-hover:brightness-90" />
                         </div>
                         <div class="rounded-b-xl p-5 border-x border-b border-white/80 h-[16rem] leading-relaxed">
                             <time class="text-md pb-2">

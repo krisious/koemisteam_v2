@@ -17,11 +17,6 @@ class Member extends Model
         return $this->user?->name ?? '-';
     }
 
-    public function getProfilePictureAttribute($value)
-    {
-        return $value ? asset('storage/' . $value) : asset('images/default-profile.jpg');
-    }
-
     public function user()
     {
         return $this->belongsTo(User::class, 'id_user', 'id');
