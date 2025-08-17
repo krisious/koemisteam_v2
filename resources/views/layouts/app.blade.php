@@ -48,6 +48,31 @@
             font-size: 16px; /* default sekitar 20–24px */
             color: white;    /* warna ikon */
         }
+
+        /* Batasi gambar dalam figure */
+        .custom-content figure img {
+            max-width: 40rem;
+            width: 100%;
+            height: auto;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+
+        /* Optional: figure center alignment */
+        .custom-content figure {
+            text-align: center;
+        }
+
+        .custom-content h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .custom-content h3 {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
     </style>
 </head>
 

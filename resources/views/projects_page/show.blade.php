@@ -33,28 +33,6 @@
                     {!! $formattedContent !!}
                 </div>
 
-                <style>
-                    /* Batasi gambar dalam figure */
-                    .custom-content figure img {
-                        max-width: 40rem;
-                        width: 100%;
-                        height: auto;
-                        margin-left: auto;
-                        margin-right: auto;
-                        display: block;
-                    }
-
-                    /* Optional: figure center alignment */
-                    .custom-content figure {
-                        text-align: center;
-                    }
-
-                    .custom-content h2 {
-                        font-size: 1.5rem;
-                        font-weight: bold;
-                    }
-                </style>
-
                 <!-- Collaborator section -->
                 <div class="justify-items-start mt-8 text-xl">
                     <h4 class="text-2xl font-bold">
