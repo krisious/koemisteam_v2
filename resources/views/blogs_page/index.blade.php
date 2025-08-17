@@ -10,8 +10,7 @@
         <div class="max-w-5xl px-8 py-12">
             <h1 class="text-5xl font-bold" style="color: #FAFAF6;">Blog</h1>
             <p class="text-xl my-6 max-w-3xl" style="color: #FAFAF6;">
-                Kami adalah kolaborasi dari para kreator yang percaya bahwa setiap proses layak untuk diceritakan. 
-                Website ini menjadi ruang untuk mengenal siapa kami, mengapa kami terbentuk, dan karya apa yang telah kami hasilkan.
+                Blog ini adalah tempat kami menyimpan potongan cerita—dari obrolan ringan saat berkumpul, perjalanan kecil yang penuh tawa, hingga momen sederhana yang ingin kami kenang bersama. Bukan sekadar tulisan, tapi jejak kebersamaan yang layak untuk dibagikan.
             </p>
 
             <!-- Search & Filters (form GET) -->
