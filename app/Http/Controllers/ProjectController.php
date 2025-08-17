@@ -3,92 +3,156 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Project;
+use App\Models\Category;
+use App\Models\Tag;
 
 class ProjectController extends Controller
 {
     public function index(Request $request)
     {
-        // Data dummy manual
-        $cards = [
-            ['id' => 0, 'title' => 'SPK Siswa Teladan Metode TOPSIS (SMK Negeri 8 Jakarta)', 'category' => 'Education', 'tags' => 'SPK, TOPSIS', 'modified' => '2025-08-01'],
-            ['id' => 1, 'title' => 'Judul Artikel 2', 'category' => 'Teknologi', 'tags' => 'AI, Machine Learning', 'modified' => '2025-07-28'],
-            ['id' => 2, 'title' => 'Judul Artikel 3', 'category' => 'Bisnis', 'tags' => 'Marketing, Sales', 'modified' => '2025-07-20'],
-            ['id' => 3, 'title' => 'Judul Artikel 4', 'category' => 'Kesehatan', 'tags' => 'Wellness, Nutrition', 'modified' => '2025-07-18'],
-            ['id' => 4, 'title' => 'Judul Artikel 5', 'category' => 'Seni', 'tags' => 'Design, Painting', 'modified' => '2025-07-15'],
-            ['id' => 5, 'title' => 'Judul Artikel 6', 'category' => 'Olahraga', 'tags' => 'Football, Training', 'modified' => '2025-07-12'],
-            ['id' => 6, 'title' => 'Judul Artikel 7', 'category' => 'Musik', 'tags' => 'Jazz, Rock', 'modified' => '2025-07-10'],
-            ['id' => 7, 'title' => 'Judul Artikel 8', 'category' => 'Travel', 'tags' => 'Adventure, Tips', 'modified' => '2025-07-05'],
-            ['id' => 8, 'title' => 'Judul Artikel 9', 'category' => 'Fashion', 'tags' => 'Style, Trends, Sales', 'modified' => '2025-07-01'],
-        ];
+        $search = $request->get('search');
+        $filterCategorySlug = (array) $request->get('filter_category', []);
+        $filterTagSlug = (array) $request->get('filter_tag', []);
+        $filterModified = $request->get('filter_modified');
 
-        // Ambil input dari request
-        $search = strtolower($request->input('search', ''));
-        $filterModified = $request->input('filter_modified', '');
-        $filterCategory = $request->input('filter_category', '');
-        $filterTag = $request->input('filter_tag', '');
+        // Convert slug ke ID untuk query
+        $filterCategory = Category::whereIn('slug', $filterCategorySlug)->pluck('id')->toArray();
+        $filterTag = Tag::whereIn('slug', $filterTagSlug)->pluck('id')->toArray();
 
-        // Filter berdasarkan search (judul)
+        $query = Project::with(['category', 'tags'])
+            ->where('is_published', true)
+            ->orderBy('created_at', 'desc');
+
         if ($search) {
-            $cards = array_filter($cards, function($card) use ($search) {
-                return strpos(strtolower($card['title']), $search) !== false;
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                ->orWhere('content', 'like', "%{$search}%");
             });
         }
 
-        // Filter berdasarkan Modified
-        if ($filterModified == 'latest') {
-            usort($cards, fn($a, $b) => strcmp($b['modified'], $a['modified']));
-        } elseif ($filterModified == 'oldest') {
-            usort($cards, fn($a, $b) => strcmp($a['modified'], $b['modified']));
+        if (!empty($filterCategory)) {
+            $query->whereIn('id_category', $filterCategory);
         }
 
-        // Filter berdasarkan Category
-        if ($filterCategory) {
-            $cards = array_filter($cards, fn($card) => strtolower($card['category']) === strtolower($filterCategory));
+        if (!empty($filterTag)) {
+            $query->whereHas('tags', function ($q) use ($filterTag) {
+                $q->whereIn('tags.id', $filterTag);
+            });
         }
 
-        // Filter berdasarkan Tag
-        if ($filterTag) {
-            $cards = array_filter($cards, fn($card) => stripos($card['tags'], $filterTag) !== false);
+        if ($filterModified === 'latest') {
+            $query->orderBy('updated_at', 'desc');
+        } elseif ($filterModified === 'oldest') {
+            $query->orderBy('updated_at', 'asc');
         }
 
-        // Reset index setelah filter
-        $cards = array_values($cards);
+        $projects = $query->paginate(6)->appends($request->all());
 
-        // Pagination
-        $perPage = 8;
-        $currentPage = $request->get('page', 1);
-        $total = count($cards);
-        $totalPages = ceil($total / $perPage);
-        $start = ($currentPage - 1) * $perPage;
-        $cardsToShow = array_slice($cards, $start, $perPage);
+        $cards = $projects->map(function ($project) {
+            return [
+                'id' => $project->id,
+                'slug' => $project->slug,
+                'title' => $project->title,
+                'category' => $project->category ? $project->category->name : 'Uncategorized',
+                'tags' => $project->tags->pluck('name')->implode(', '),
+                'modified' => $project->created_at,
+                'thumbnail' => $project->thumbnail
+                    ? asset('storage/' . $project->thumbnail)
+                    : asset('bg-project.png'),
+            ];
+        });
+
+        // Ambil kategori & tag yang dipakai project published saja
+        $categories = Category::whereHas('project', function ($q) {
+            $q->where('is_published', true);
+        })->orderBy('name')->get();
+
+        $tags = Tag::whereHas('project', function ($q) {
+            $q->where('is_published', true);
+        })->orderBy('name')->get();
+
+        // Ambil nama yang dipilih untuk summary di tombol
+        $selectedCategoryNames = $categories->whereIn('slug', $filterCategorySlug)->pluck('name')->toArray();
+        $selectedTagNames = $tags->whereIn('slug', $filterTagSlug)->pluck('name')->toArray();
 
         return view('projects_page.index', [
-            'cards' => $cardsToShow,
-            'totalPages' => $totalPages,
-            'currentPage' => $currentPage,
-            'startIndex' => $start,
+            'projects' => $projects,
+            'cards' => $cards,
             'search' => $search,
             'filterModified' => $filterModified,
-            'filterCategory' => $filterCategory,
-            'filterTag' => $filterTag,
-        ]);
+            'categories' => $categories,
+            'tags' => $tags,
+            'selectedCategories' => $filterCategorySlug, // slug
+            'selectedTags' => $filterTagSlug, // slug
+            'selectedCategoryNames' => $selectedCategoryNames,
+            'selectedTagNames' => $selectedTagNames,
+        ]);   
     }
 
-    public function show($id)
+    public function show($slug)
     {
-        $cards = [
-            ['id' => 0, 'title' => 'SPK Siswa Teladan Metode TOPSIS (SMK Negeri 8 Jakarta)', 'category' => 'Education', 'tags' => 'SPK, TOPSIS', 'modified' => '2025-08-01', 'collaborator' => 'Agung Krissanto', 'image' => '/bg-blog.png', 'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Diam vel porttitor imperdiet ut a aliquam dui. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Diam vel porttitor imperdiet ut a aliquam dui. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Diam vel porttitor.', 'project_link' => 'https://github.com/krisious/koemisteam_v2, https://www.figma.com/design/8lhcrChmxRduSNULP4qctK/Koemis-Team-Prototype?node-id=27-143&t=NdHSzPeREZEH3nDI-1'],
-            ['id' => 1, 'title' => 'Judul Artikel 2', 'category' => 'Teknologi', 'tags' => 'AI, Machine Learning', 'modified' => '2025-07-28', 'collaborator' => 'Dwi Krisdiyanto', 'image' => '/Chat 2.png', 'content' => 'Isi konten artikel 2...', 'project_link' => 'https://github.com/krisious, https://github.com/AgungKriss, https://tailwindcss.com/docs/background-color#applying-on-hover'],
-            // ... tambahkan data lain sesuai kebutuhan
-        ];
+        // Ambil project berdasarkan slug + relasi category, tags, dan member
+        $project = Project::with([
+            'category',
+            'tags',
+            'member.user',
+            'collaborator.user',
+            'link'
+        ])->where('slug', $slug)->firstOrFail();
 
-        $card = collect($cards)->firstWhere('id', $id);
-
-        if (!$card) {
-            abort(404);
+        // Owner (satu)
+        $owner = [];
+        if ($project->member && $project->member->user) {
+            $owner = [
+                'name' => $project->member->user->name,
+                'profile_picture' => $project->member->profile_picture 
+                    ? asset('storage/' . $project->member->profile_picture)
+                    : '/default-avatar.png',
+                'slug' => $project->member->slug,
+            ];
         }
+
+        // Collaborators (banyak)
+        $collaborators = $project->collaborator->map(function ($member) {
+            return [
+                'name' => $member->user?->name,
+                'profile_picture' => $member->profile_picture 
+                    ? asset('storage/' . $member->profile_picture)
+                    : '/default-avatar.png',
+                'slug' => $member->slug,
+            ];
+        })->filter()->values()->toArray();
+
+        // Gabungkan owner + collaborators
+        $allCollaborators = [];
+        if (!empty($owner)) {
+            $allCollaborators[] = $owner;
+        }
+        $allCollaborators = array_merge($allCollaborators, $collaborators);
+
+        $links = $project->link->map(function ($link) {
+            return [
+                'url' => $link->pivot->url ?: '#',
+                'name' => $link->name,
+                'icon' => $link->icon,
+            ];
+        })->toArray();
+
+        $card = [
+            'id'            => $project->id,
+            'slug'          => $project->slug,
+            'title'         => $project->title,
+            'collaborators' => $allCollaborators, // 👈 siap dipakai di Blade
+            'category'      => $project->category->name ?? 'No category',
+            'tags'          => $project->tags->pluck('name')->implode(', '),
+            'link'          => $links,
+            'image'         => $project->image ? asset('storage/'.$project->image) : '/Chat 1.png',
+            'thumbnail'     => $project->thumbnail ? asset('storage/'.$project->thumbnail) : '',
+            'modified'      => $project->updated_at,
+            'content'       => $project->content ?? '',
+        ];
 
         return view('projects_page.show', compact('card'));
     }
-}
- 
+} 

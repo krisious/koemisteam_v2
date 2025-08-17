@@ -43,23 +43,6 @@
             {!! $formattedContent !!}
         </div>
 
-        <style>
-            /* Batasi gambar dalam figure */
-            .custom-content figure img {
-                max-width: 40rem;
-                width: 100%;
-                height: auto;
-                margin-left: auto;
-                margin-right: auto;
-                display: block;
-            }
-
-            /* Optional: figure center alignment */
-            .custom-content figure {
-                text-align: center;
-            }
-        </style>
-
         <!-- Tags -->
         <div class="mt-8">
             <h4 class="text-2xl font-bold">Tags</h4>
