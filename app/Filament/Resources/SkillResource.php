@@ -67,6 +67,7 @@ class SkillResource extends Resource
                     ->sortable()
                     ->searchable(),
                 ImageColumn::make('icon')
+                    ->disk('ftp')
                     ->label('Ikon Skill'),
                 ColorColumn::make('color')
                     ->label('Warna Skill')

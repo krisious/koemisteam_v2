@@ -66,7 +66,7 @@ return [
             'username' => env('FTP_USERNAME'),
             'password' => env('FTP_PASSWORD'),
             'root' => '/',
-            'url' => env('FTP_URL', 'http://koemisteam.my.id/uploads'),
+            'url' => env('FTP_URL', 'http://www.koemisteam.my.id/uploads'),
             'visibility' => 'public',
         ],
 

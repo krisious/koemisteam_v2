@@ -59,6 +59,7 @@ class ContactResource extends Resource
                     ->sortable()
                     ->searchable(),
                 ImageColumn::make('icon')
+                    ->disk('ftp')
                     ->label('Ikon Kontak'),
             ])
             ->filters([

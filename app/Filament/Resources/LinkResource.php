@@ -59,6 +59,7 @@ class LinkResource extends Resource
                     ->sortable()
                     ->searchable(),
                 ImageColumn::make('icon')
+                    ->disk('ftp')
                     ->label('Ikon Link'),
             ])
             ->filters([

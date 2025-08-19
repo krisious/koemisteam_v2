@@ -115,6 +115,7 @@ class ProjectResource extends Resource
         return $table
             ->columns([
                 ImageColumn::make('thumbnail')
+                    ->disk('ftp')
                     ->label('Thumbnail'),
                 TextColumn::make('member.user.name')
                     ->label('Kreator')
