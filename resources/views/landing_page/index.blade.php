@@ -184,7 +184,7 @@
             <div class="flex mt-10">
                 @foreach($latestBlogs as $blog)
                     <div class="bg-[#9BADDA] w-2xs h-[11rem] mr-10 rounded-xl drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)] overflow-hidden relative">
-                        <img src="{{ asset('storage/'.$blog->thumbnail) }}" class="absolute inset-0 object-cover w-full h-full" />
+                        <img src="{{ $blog->thumbnail_url }}" class="absolute inset-0 object-cover w-full h-full" />
                     </div>
                 @endforeach
             </div>
@@ -216,7 +216,7 @@
                     <div class="flex mt-10 max-w-3xl -translate-x-45">
                         @foreach($latestProjects as $project)
                             <div class="bg-[#9BADDA] w-[14rem] h-[8rem] mr-10 px-8 py-3 rounded-xl drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)] overflow-hidden relative">
-                                <img src="{{ asset('storage/'.$project->thumbnail) }}" class="absolute inset-0 object-cover w-full h-full" />
+                                <img src="{{ $project->thumbnail_url }}" class="absolute inset-0 object-cover w-full h-full" />
                             </div>
                         @endforeach
                     </div>

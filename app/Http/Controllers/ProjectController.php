@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Project;
 use App\Models\Category;
 use App\Models\Tag;
+use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
@@ -58,7 +59,7 @@ class ProjectController extends Controller
                 'tags' => $project->tags->pluck('name')->implode(', '),
                 'modified' => $project->created_at,
                 'thumbnail' => $project->thumbnail
-                    ? asset('storage/' . $project->thumbnail)
+                    ? Storage::disk('ftp')->url($project->thumbnail)
                     : asset('bg-project.png'),
             ];
         });
@@ -107,7 +108,7 @@ class ProjectController extends Controller
             $owner = [
                 'name' => $project->member->user->name,
                 'profile_picture' => $project->member->profile_picture 
-                    ? asset('storage/' . $project->member->profile_picture)
+                    ? Storage::disk('ftp')->url($project->member->profile_picture)
                     : '/default-avatar.png',
                 'slug' => $project->member->slug,
             ];
@@ -118,7 +119,7 @@ class ProjectController extends Controller
             return [
                 'name' => $member->user?->name,
                 'profile_picture' => $member->profile_picture 
-                    ? asset('storage/' . $member->profile_picture)
+                    ? Storage::disk('ftp')->url($member->profile_picture)
                     : '/default-avatar.png',
                 'slug' => $member->slug,
             ];
@@ -147,8 +148,8 @@ class ProjectController extends Controller
             'category'      => $project->category->name ?? 'No category',
             'tags'          => $project->tags->pluck('name')->implode(', '),
             'link'          => $links,
-            'image'         => $project->image ? asset('storage/'.$project->image) : '/Chat 1.png',
-            'thumbnail'     => $project->thumbnail ? asset('storage/'.$project->thumbnail) : '',
+            'image'         => $project->image ? Storage::disk('ftp')->url($project->image) : '/Chat 1.png',
+            'thumbnail'     => $project->thumbnail ? Storage::disk('ftp')->url($project->thumbnail) : '',
             'modified'      => $project->updated_at,
             'content'       => $project->content ?? '',
         ];

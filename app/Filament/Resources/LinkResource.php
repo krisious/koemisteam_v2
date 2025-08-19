@@ -41,7 +41,7 @@ class LinkResource extends Resource
                     ->columnSpanFull(),
                 FileUpload::make('icon')
                     ->label('Ikon Link')
-                    ->disk('public')
+                    ->disk('ftp')
                     ->directory('link')
                     ->visibility('public')
                     ->downloadable()

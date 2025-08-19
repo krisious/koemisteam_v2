@@ -62,13 +62,13 @@ class MemberResource extends Resource
                         '4:3',
                         '1:1',
                     ])
-                    ->disk('public')
+                    ->disk('ftp')
                     ->directory('profil')
                     ->visibility('public')
                     ->downloadable()
                     ->required()
                     ->dehydrated()
-                    ->helperText(str('Pastikan foto memiliki **background transparan**.')->inlineMarkdown()->toHtmlString()),
+                    ->helperText(str('Disarankan foto memiliki **background transparan**.')->inlineMarkdown()->toHtmlString()),
 
                 TextInput::make('user_name')
                     ->label('Nama Lengkap')
@@ -158,6 +158,7 @@ class MemberResource extends Resource
         return $table
             ->columns([
                 ImageColumn::make('profile_picture')
+                    ->disk('ftp')
                     ->label('Foto Profil')
                     ->circular(),
                 TextColumn::make('user.name')

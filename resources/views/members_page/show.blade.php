@@ -21,7 +21,7 @@
                         <a href="{{ $contact->pivot->value ?? '#' }}" target="_blank" 
                             class="flex bg-[#9BADDA] size-10 rounded-lg place-items-center">
                             @if($contact->icon)
-                                <img src="{{ asset('storage/'.$contact->icon) }}" alt="{{ $contact->name }}" class="w-4 h-4 mx-auto">
+                                <img src="{{ $contact->icon_url  }}" alt="{{ $contact->name }}" class="w-4 h-4 mx-auto">
                             @else
                                 <span class="text-white text-sm mx-auto">{{ $contact->name }}</span>
                             @endif
@@ -46,7 +46,7 @@
             @forelse ($skills as $skill)
                 <div class="text-white py-2 px-5 rounded-lg flex items-start" style="background-color: {{ $skill->color }}">
                     @if($skill->icon)
-                        <img src="{{ asset('storage/'.$skill->icon) }}" alt="{{ $skill->name }}" class="w-6 h-6 inline-block mr-2">
+                        <img src="{{ $skill->icon_url }}" alt="{{ $skill->name }}" class="w-6 h-6 inline-block mr-2">
                     @endif
                     <p class="font-bold">{{ $skill->name }}</p>
                 </div>
@@ -74,7 +74,7 @@
                 <div class="flex flex-col max-w-sm drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)] basis-1/4 group hover:bg-white/50 rounded-xl">
                     <a href="{{ route('blog.show', $blog->slug) }}">
                         <div class="h-[14rem] relative overflow-hidden rounded-t-xl">
-                            <img src="{{ $blog->thumbnail ? asset('storage/'.$blog->thumbnail) : asset('/bg-blog.png') }}" 
+                            <img src="{{ $blog->thumbnail_url }}" alt="{{ $blog->title }}" 
                                 class="absolute inset-0 object-cover w-full h-full transition-transform duration-300 group-hover:scale-110 group-hover:brightness-90" />
                         </div>
                         <div class="rounded-b-xl p-5 border-x border-b border-white/80 h-[16rem] leading-relaxed">
@@ -121,7 +121,7 @@
                 <div class="flex flex-col max-w-sm drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)] basis-1/4 group hover:bg-white/50 rounded-xl">
                     <a href="{{ route('project.show', $project->slug) }}">
                         <div class="h-[14rem] relative overflow-hidden rounded-t-xl">
-                            <img src="{{ $project->thumbnail ? asset('storage/'.$project->thumbnail) : asset('/bg-project.png') }}" 
+                            <img src="{{ $project->thumbnail_url }}" alt="{{ $project->title }}"
                                 class="absolute inset-0 object-cover w-full h-full transition-transform duration-300 group-hover:scale-110 group-hover:brightness-90" />
                         </div>
                         <div class="rounded-b-xl p-5 border-x border-b border-white/80 h-[16rem] leading-relaxed">

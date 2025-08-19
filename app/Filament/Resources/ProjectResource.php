@@ -92,15 +92,15 @@ class ProjectResource extends Resource
                     ->imageEditorAspectRatios([
                         '16:9',
                     ])
-                    ->disk('public')
-                    ->directory('blog')
+                    ->disk('ftp')
+                    ->directory('project')
                     ->visibility('public')
                     ->required()
                     ->columnSpanFull(),
                 RichEditor::make('content')
                     ->label('Konten')
-                    ->fileAttachmentsDisk('public')
-                    ->fileAttachmentsDirectory('blog')
+                    ->fileAttachmentsDisk('ftp')
+                    ->fileAttachmentsDirectory('project')
                     ->fileAttachmentsVisibility('public')
                     ->required()
                     ->columnSpanFull(),

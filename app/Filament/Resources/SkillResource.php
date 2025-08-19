@@ -43,7 +43,7 @@ class SkillResource extends Resource
                     ->columnSpanFull(),
                 FileUpload::make('icon')
                     ->label('Ikon Skill')
-                    ->disk('public')
+                    ->disk('ftp')
                     ->directory('skill')
                     ->visibility('public')
                     ->downloadable()

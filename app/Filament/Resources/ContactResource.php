@@ -41,7 +41,7 @@ class ContactResource extends Resource
                     ->columnSpanFull(),
                 FileUpload::make('icon')
                     ->label('Ikon Kontak')
-                    ->disk('public')
+                    ->disk('ftp')
                     ->directory('contact')
                     ->visibility('public')
                     ->downloadable()

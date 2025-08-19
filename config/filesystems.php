@@ -60,13 +60,14 @@ return [
             'report' => false,
         ],
 
-        'uploads' => [
-            'driver' => 'local',
-            'root' => '/home/username/uploads',
-            'url' => env('APP_URL').'/uploads',
+        'ftp' => [
+            'driver' => 'ftp',
+            'host' => env('FTP_HOST'),
+            'username' => env('FTP_USERNAME'),
+            'password' => env('FTP_PASSWORD'),
+            'root' => '/',
+            'url' => env('FTP_URL', 'http://www.koemisteam.my.id/uploads'),
             'visibility' => 'public',
-            'throw' => false,
-            'report' => false,
         ],
 
     ],

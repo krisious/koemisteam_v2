@@ -7,6 +7,7 @@ use App\Models\Blog;
 use App\Models\Category;
 use App\Models\Tag;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class BlogController extends Controller
 {
@@ -59,7 +60,7 @@ class BlogController extends Controller
                 'tags' => $blog->tags->pluck('name')->implode(', '),
                 'modified' => $blog->created_at,
                 'thumbnail' => $blog->thumbnail 
-                    ? asset('storage/' . $blog->thumbnail) 
+                    ? Storage::disk('ftp')->url($blog->thumbnail) 
                     : asset('bg-blog.png'),
             ];
         });
@@ -108,8 +109,8 @@ class BlogController extends Controller
             'category'  => $blog->category->name ?? 'No category',
             'tags'      => $blog->tags->pluck('name')->implode(', '),
             // Map path image ke storage
-            'image'     => $blog->image ? asset('storage/'.$blog->image) : '/Chat 1.png',
-            'thumbnail' => $blog->thumbnail ? asset('storage/'.$blog->thumbnail) : '',
+            'image'     => $blog->image ? Storage::disk('ftp')->url($blog->image) : '/Chat 1.png',
+            'thumbnail' => $blog->thumbnail ? Storage::disk('ftp')->url($blog->thumbnail) : '',
             'modified'  => $blog->updated_at,
             'content'   => $blog->content ?? '',
         ];

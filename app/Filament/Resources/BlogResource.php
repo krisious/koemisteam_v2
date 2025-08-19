@@ -92,14 +92,14 @@ class BlogResource extends Resource
                     ->imageEditorAspectRatios([
                         '16:9',
                     ])
-                    ->disk('public')
+                    ->disk('ftp')
                     ->directory('blog')
                     ->visibility('public')
                     ->required()
                     ->columnSpanFull(),
                 RichEditor::make('content')
                     ->label('Konten')
-                    ->fileAttachmentsDisk('public')
+                    ->fileAttachmentsDisk('ftp')
                     ->fileAttachmentsDirectory('blog')
                     ->fileAttachmentsVisibility('public')
                     ->required()
