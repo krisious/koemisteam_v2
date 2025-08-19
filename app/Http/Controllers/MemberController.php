@@ -13,18 +13,20 @@ class MemberController extends Controller
     public function index()
     {
         $members = Member::with('user')
-            ->select('id', 'id_user', 'slug', 'profile_picture', 'bio')
-            ->get()
-            ->map(function ($member) {
-                return [
-                    'name' => $member->user->name ?? 'Unknown', // dari tabel user
-                    'profile_picture' => $member->profile_picture
-                        ? Storage::disk('ftp')->url($member->profile_picture)
-                        : asset('default-profile.png'),
-                    'slug' => $member->slug,
-                    'bio' => $member->bio,
-                ];
-            });
+        ->select('id', 'id_user', 'slug', 'profile_picture', 'bio')
+        ->get()
+        ->map(function ($member) {
+            return [
+                'name' => $member->user->name ?? 'Unknown',
+                'profile_picture' => $member->profile_picture
+                    ? Storage::disk('ftp')->url($member->profile_picture)
+                    : asset('default-profile.png'),
+                'slug' => $member->slug,
+                'bio' => $member->bio,
+            ];
+        })
+        ->sortBy('name') // <- gunakan ini, bukan orderBy
+        ->values(); // reset index
 
         return view('members_page.index', compact('members'));
         // Bagi menjadi grup per 5 member
