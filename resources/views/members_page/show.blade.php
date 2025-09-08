@@ -65,95 +65,110 @@
     @endphp    
 
     <!-- Blog Section -->
-    <div class="px-16 mt-16">
+    <div class="max-w-6xl mx-auto px-6 mt-16">
         <h3 class="text-5xl font-bold">Blog</h3>
         <hr class="thick-line px-16 mt-5 mb-10">
 
-        <div class="flex flex-wrap gap-10 justify-center">
-            @forelse ($blogs as $blog)
-                <div class="flex flex-col max-w-sm drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)] basis-1/4 group hover:bg-white/50 rounded-xl">
-                    <a href="{{ route('blog.show', $blog->slug) }}">
-                        <div class="h-[14rem] relative overflow-hidden rounded-t-xl">
-                            <img src="{{ $blog->thumbnail_url }}" alt="{{ $blog->title }}" 
-                                class="absolute inset-0 object-cover w-full h-full transition-transform duration-300 group-hover:scale-110 group-hover:brightness-90" />
-                        </div>
-                        <div class="rounded-b-xl p-5 border-x border-b border-white/80 h-[16rem] leading-relaxed">
-                            <time class="text-md pb-2">
-                                {{ $blog->created_at->format('d M Y') }}
-                            </time>
-                            <h1 class="text-2xl font-bold pb-3">{{ limitWords($blog->title, 8) }}</h1>
-                            <p class="text-md pb-2">{{ $blog->category->name ?? '-' }}</p>
-                            <p class="text-md pb-2">
-                                {{ $blog->tags->pluck('name')->take(3)->implode(', ') }}
-                                @if($blog->tags->count() > 3)
-                                    +{{ $blog->tags->count() - 3 }}
-                                @endif
-                            </p>
-                            <p class="text-md font-bold text-[#9BADDA]">See more...</p>
-                        </div>
-                    </a>
-                </div>
-            @empty
-                <p class="text-gray-500">No blog posts available.</p>
-            @endforelse
-        </div>
+        @if ($blogs->count() > 0)
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
+                @foreach ($blogs as $blog)
+                    <article class="bg-white rounded-xl overflow-hidden shadow group">
+                        <a href="{{ route('blog.show', $blog->slug) }}" class="block">
+                            <!-- Thumbnail -->
+                            <div class="h-56 overflow-hidden relative">
+                                <img src="{{ $blog->thumbnail_url }}" 
+                                    alt="{{ $blog->title }}" 
+                                    class="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105 group-hover:brightness-90" />
+                            </div>
 
-        {{-- Blog Pagination --}}
-        @if ($totalBlogPages > 1)
-            <div class="flex justify-center items-center space-x-2 my-10">
-                @for ($page = 1; $page <= $totalBlogPages; $page++)
-                    <a href="?blog_page={{ $page }}&project_page={{ $currentProjectPage }}"
-                    class="px-4 py-2 border rounded {{ $page == $currentBlogPage ? 'bg-[#9CADDA] text-white' : 'bg-white text-[#9CADDA] hover:bg-[#9CADDA]/20' }}">
-                        {{ $page }}
-                    </a>
-                @endfor
+                            <!-- Content -->
+                            <div class="p-5">
+                                <time class="text-sm text-gray-500">
+                                    {{ $blog->created_at->format('d M Y') }}
+                                </time>
+                                <h1 class="text-xl font-bold mt-2">
+                                    {{ limitWords($blog->title, 12) }}
+                                </h1>
+                                <p class="text-sm text-gray-600 mt-2">
+                                    {{ $blog->category->name ?? 'Uncategorized' }}
+                                </p>
+                                <p class="text-sm text-gray-500 mt-1">
+                                    {{ $blog->tags->pluck('name')->take(3)->implode(', ') }}
+                                    @if($blog->tags->count() > 3)
+                                        +{{ $blog->tags->count() - 3 }}
+                                    @endif
+                                </p>
+                                <p class="mt-3 text-sm font-semibold text-[#9BADDA]">See more...</p>
+                            </div>
+                        </a>
+                    </article>
+                @endforeach
+            </div>
+
+            <!-- Pagination -->
+            <div class="mt-8 flex justify-center">
+                {{ $blogs->links() }}
+            </div>
+        @else
+            <!-- Empty state -->
+            <div class="flex flex-col items-center justify-center text-center py-20">
+                <i class="fa-solid fa-circle-exclamation text-6xl text-[#9BADDA] mb-4"></i>
+                <h2 class="text-2xl font-bold text-gray-800">Sepertinya blog ini masih kosong... Yuk tunggu update terbaru dariku.</h2>
             </div>
         @endif
     </div>
 
+
     <!-- Project Section -->
-    <div class="px-16 mt-16">
-        <h1 class="text-5xl font-bold">Project</h1>
+    <div class="max-w-6xl mx-auto px-6 mt-16">
+        <h3 class="text-5xl font-bold">Project</h3>
         <hr class="thick-line px-16 mt-5 mb-10">
 
-        <div class="flex flex-wrap gap-10 justify-center">
-            @forelse ($projects as $project)
-                <div class="flex flex-col max-w-sm drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)] basis-1/4 group hover:bg-white/50 rounded-xl">
-                    <a href="{{ route('project.show', $project->slug) }}">
-                        <div class="h-[14rem] relative overflow-hidden rounded-t-xl">
-                            <img src="{{ $project->thumbnail_url }}" alt="{{ $project->title }}"
-                                class="absolute inset-0 object-cover w-full h-full transition-transform duration-300 group-hover:scale-110 group-hover:brightness-90" />
-                        </div>
-                        <div class="rounded-b-xl p-5 border-x border-b border-white/80 h-[16rem] leading-relaxed">
-                            <time class="text-md pb-2">
-                                {{ $project->created_at->format('d M Y') }}
-                            </time>
-                            <h1 class="text-2xl font-bold pb-3">{{ limitWords($project->title, 8) }}</h1>
-                            <p class="text-md pb-2">{{ $project->category->name ?? '-' }}</p>
-                            <p class="text-md pb-2">
-                                {{ $project->tags->pluck('name')->take(3)->implode(', ') }}
-                                @if($project->tags->count() > 3)
-                                    +{{ $project->tags->count() - 3 }}
-                                @endif
-                            </p>
-                            <p class="text-md font-bold text-[#9BADDA]">See more...</p>
-                        </div>
-                    </a>
-                </div>
-            @empty
-                <p class="text-gray-500">No projects available.</p>
-            @endforelse
-        </div>
+        @if ($projects->count() > 0)
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
+                @foreach ($projects as $project)
+                    <article class="bg-white rounded-xl overflow-hidden shadow group">
+                        <a href="{{ route('project.show', $project->slug) }}" class="block">
+                            <!-- Thumbnail -->
+                            <div class="h-56 overflow-hidden relative">
+                                <img src="{{ $project->thumbnail_url }}" 
+                                    alt="{{ $project->title }}" 
+                                    class="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105 group-hover:brightness-90" />
+                            </div>
 
-        {{-- Project Pagination --}}
-        @if ($totalProjectPages > 1)
-            <div class="flex justify-center items-center space-x-2 my-10">
-                @for ($page = 1; $page <= $totalProjectPages; $page++)
-                    <a href="?project_page={{ $page }}&blog_page={{ $currentBlogPage }}"
-                       class="px-4 py-2 border rounded {{ $page == $currentProjectPage ? 'bg-[#9CADDA] text-white' : 'bg-white text-[#9CADDA] hover:bg-[#9CADDA]/20' }}">
-                        {{ $page }}
-                    </a>
-                @endfor
+                            <!-- Content -->
+                            <div class="p-5">
+                                <time class="text-sm text-gray-500">
+                                    {{ $project->created_at->format('d M Y') }}
+                                </time>
+                                <h1 class="text-xl font-bold mt-2">
+                                    {{ limitWords($project->title, 12) }}
+                                </h1>
+                                <p class="text-sm text-gray-600 mt-2">
+                                    {{ $project->category->name ?? 'Uncategorized' }}
+                                </p>
+                                <p class="text-sm text-gray-500 mt-1">
+                                    {{ $project->tags->pluck('name')->take(3)->implode(', ') }}
+                                    @if($project->tags->count() > 3)
+                                        +{{ $project->tags->count() - 3 }}
+                                    @endif
+                                </p>
+                                <p class="mt-3 text-sm font-semibold text-[#9BADDA]">See more...</p>
+                            </div>
+                        </a>
+                    </article>
+                @endforeach
+            </div>
+
+            <!-- Pagination -->
+            <div class="mt-8 flex justify-center">
+                {{ $projects->links() }}
+            </div>
+        @else
+            <!-- Empty state -->
+            <div class="flex flex-col items-center justify-center text-center py-20">
+                <i class="fa-solid fa-circle-exclamation text-6xl text-[#9BADDA] mb-4"></i>
+                <h2 class="text-2xl font-bold text-gray-800">Sepertinya project ini masih kosong... Yuk tunggu update terbaru dariku.</h2>
             </div>
         @endif
     </div>

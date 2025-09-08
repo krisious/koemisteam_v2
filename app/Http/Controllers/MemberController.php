@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Member;
 use App\Models\Blog;
 use App\Models\Project;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class MemberController extends Controller
@@ -51,27 +51,29 @@ class MemberController extends Controller
         // Blogs
         $blogs = Blog::where('id_member', $member->id)
             ->latest('created_at')
-            ->get()
-            ->map(function ($blog) {
-                $blog->thumbnail_url = $blog->thumbnail
-                    ? Storage::disk('ftp')->url($blog->thumbnail)
-                    : asset('/bg-blog.png');
-                return $blog;
-            });
+            ->paginate(6);
+
+        $blogs->getCollection()->transform(function ($blog) {
+            $blog->thumbnail_url = $blog->thumbnail
+                ? Storage::disk('ftp')->url($blog->thumbnail)
+                : asset('/bg-blog.png');
+            return $blog;
+        });
 
         // Projects
         $projects = Project::where('id_member', $member->id)
-            ->orWhereHas('collaborator', function ($query) use ($member) {
-                $query->where('id_member', $member->id);
-            })
-            ->latest('created_at')
-            ->get()
-            ->map(function ($project) {
-                $project->thumbnail_url = $project->thumbnail
-                    ? Storage::disk('ftp')->url($project->thumbnail)
-                    : asset('/bg-project.png');
-                return $project;
-            });
+                ->orWhereHas('collaborator', function ($query) use ($member) {
+                    $query->where('id_member', $member->id);
+                })
+                ->latest('created_at')
+                ->paginate(6);
+
+        $projects->getCollection()->transform(function ($project) {
+            $project->thumbnail_url = $project->thumbnail
+                ? Storage::disk('ftp')->url($project->thumbnail)
+                : asset('/bg-project.png');
+            return $project;
+        });
 
         // Contacts
         $contacts = $member->memberContact->map(function ($contact) {
@@ -105,10 +107,10 @@ class MemberController extends Controller
             'member'            => $member,
             'contacts'          => $contacts ?? [],
             'skills'            => $skills ?? [],
-            'blogs'             => $blogPaged,
+            'blogs'             => $blogs,
             'totalBlogPages'    => $totalBlogPages,
             'currentBlogPage'   => $currentPageBlog,
-            'projects'          => $projectPaged,
+            'projects'          => $projects,
             'totalProjectPages' => $totalProjectPages,
             'currentProjectPage'=> $currentPageProject,
         ]);
