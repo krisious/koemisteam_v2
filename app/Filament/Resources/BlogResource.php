@@ -154,12 +154,12 @@ class BlogResource extends Resource
                     })
                     ->sortable()
                     ->searchable(),
-                TextColumn::make('updated_at')
+                TextColumn::make('created_at')
                     ->label('Terakhir Diperbarui')
                     ->dateTime()
                     ->sortable()
                     ->searchable(),
-            ])->defaultSort('created_at','asc')
+            ])->defaultSort('created_at','desc')
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
             ])

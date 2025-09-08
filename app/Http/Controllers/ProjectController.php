@@ -51,12 +51,14 @@ class ProjectController extends Controller
         $projects = $query->paginate(6)->appends($request->all());
 
         $cards = $projects->map(function ($project) {
+            $tags = $blog->tags->pluck('name')->toArray();
             return [
                 'id' => $project->id,
                 'slug' => $project->slug,
                 'title' => $project->title,
                 'category' => $project->category ? $project->category->name : 'Uncategorized',
-                'tags' => $project->tags->pluck('name')->implode(', '),
+                'tags_display' => collect($tags)->take(3)->implode(', '),
+                'tags_count' => count($tags) > 3 ? count($tags) - 3 : 0,
                 'modified' => $project->created_at,
                 'thumbnail' => $project->thumbnail
                     ? Storage::disk('ftp')->url($project->thumbnail)

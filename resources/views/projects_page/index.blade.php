@@ -138,7 +138,12 @@
                                 <time class="text-sm text-gray-500">{{ \Carbon\Carbon::parse($card['modified'])->format('d M Y') }}</time>
                                 <h3 class="text-xl font-bold mt-2">{{ \Illuminate\Support\Str::words($card['title'], 12, '...') }}</h3>
                                 <p class="text-sm text-gray-600 mt-2">{{ $card['category'] }}</p>
-                                <p class="text-sm text-gray-500 mt-1">{{ $card['tags'] }}</p>
+                                <p class="text-sm text-gray-500 mt-1">
+                                    {{ $card['tags_display'] }}
+                                    @if($card['tags_count'] > 0)
+                                        +{{ $card['tags_count'] }}
+                                    @endif
+                                </p>
                                 <p class="mt-3 text-sm font-semibold text-[#9BADDA]">See more...</p>
                             </div>
                         </a>

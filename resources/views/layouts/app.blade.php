@@ -49,6 +49,10 @@
             color: white;    /* warna ikon */
         }
 
+        .see-more:hover {
+            color: #9BADDA !important
+        }
+
         /* Batasi gambar dalam figure */
         .custom-content figure img {
             max-width: 40rem;

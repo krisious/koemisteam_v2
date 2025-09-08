@@ -44,20 +44,22 @@ class BlogController extends Controller
         }
 
         if ($filterModified === 'latest') {
-            $query->orderBy('updated_at', 'desc');
+            $query->sortBy('updated_at', 'desc');
         } elseif ($filterModified === 'oldest') {
-            $query->orderBy('updated_at', 'asc');
+            $query->sortBy('updated_at', 'asc');
         }
 
         $blogs = $query->paginate(6)->appends($request->all());
 
         $cards = $blogs->map(function ($blog) {
+            $tags = $blog->tags->pluck('name')->toArray();
             return [
                 'id' => $blog->id,
                 'slug' => $blog->slug,
                 'title' => $blog->title,
                 'category' => $blog->category ? $blog->category->name : 'Uncategorized',
-                'tags' => $blog->tags->pluck('name')->implode(', '),
+                'tags_display' => collect($tags)->take(3)->implode(', '),
+                'tags_count' => count($tags) > 3 ? count($tags) - 3 : 0,
                 'modified' => $blog->created_at,
                 'thumbnail' => $blog->thumbnail 
                     ? Storage::disk('ftp')->url($blog->thumbnail) 

@@ -6,7 +6,7 @@
 <div>
     <!-- Hero Section -->
     <div class="relative flex items-center bg-cover bg-center bg-no-repeat h-[40rem]" 
-         style="background-image: url('{{ asset('/bg-blog.png') }}')">
+        style="background-image: url('{{ asset('/bg-blog.png') }}')">
         <div class="max-w-5xl px-8 py-12">
             <h1 class="text-5xl font-bold" style="color: #FAFAF6;">Blog</h1>
             <p class="text-xl my-6 max-w-3xl" style="color: #FAFAF6;">
@@ -127,19 +127,30 @@
     <!-- Blog Cards Grid -->
     <div class="max-w-6xl mx-auto px-6 -translate-y-16">
         @if (count($cards) > 0)
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
                 @foreach ($cards as $card)
                     <article class="bg-white rounded-xl overflow-hidden shadow group">
                         <a href="{{ route('blog.show', ['slug' => $card['slug']]) }}" class="block">
                             <div class="h-56 overflow-hidden relative">
-                                <img src="{{ $card['thumbnail'] }}" alt="{{ $card['title'] }}" class="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105" />
+                                <img src="{{ $card['thumbnail'] }}" 
+                                    alt="{{ $card['title'] }}" 
+                                    class="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105" />
                             </div>
                             <div class="p-5">
-                                <time class="text-sm text-gray-500">{{ \Carbon\Carbon::parse($card['modified'])->format('d M Y') }}</time>
-                                <h3 class="text-xl font-bold mt-2">{{ \Illuminate\Support\Str::words($card['title'], 12, '...') }}</h3>
+                                <time class="text-sm text-gray-500">
+                                    {{ \Carbon\Carbon::parse($card['modified'])->format('d M Y') }}
+                                </time>
+                                <h3 class="text-xl font-bold mt-2">
+                                    {{ \Illuminate\Support\Str::words($card['title'], 12, '...') }}
+                                </h3>
                                 <p class="text-sm text-gray-600 mt-2">{{ $card['category'] }}</p>
-                                <p class="text-sm text-gray-500 mt-1">{{ $card['tags'] }}</p>
-                                <p class="mt-3 text-sm font-semibold text-[#9BADDA]">See more...</p>
+                                <p class="text-sm text-gray-500 mt-1">
+                                    {{ $card['tags_display'] }}
+                                    @if($card['tags_count'] > 0)
+                                        +{{ $card['tags_count'] }}
+                                    @endif
+                                </p>
+                                <p class="mt-3 text-sm font-semibold text-[#9BADDA] see-more">See more...</p>
                             </div>
                         </a>
                     </article>

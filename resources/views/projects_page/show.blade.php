@@ -78,12 +78,12 @@
                                     $label = $labels[$host] ?? ($link['name'] ?? ucfirst(strtok($host, '.')));
                                 @endphp
                                 <a href="{{ $url }}" target="_blank" rel="noopener noreferrer"
-                                    class="bg-[#9BADDA] py-2 px-5 rounded-lg drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)] hover:bg-[#7690C3] transition">
+                                    class="bg-[#9BADDA] py-2 px-5 rounded-lg drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)] hover:bg-[#7690C3] transition"
                                     {{ $label }}
                                 </a>
                             @endforeach
                         @else
-                            <span class="bg-[#9BADDA] py-2 px-5 rounded-lg drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)]">
+                            <span class="bg-[#9BADDA] py-2 px-5 rounded-lg drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)]" style="color: #FAFAF6;">
                                 No Project Link
                             </span>
                         @endif
@@ -103,7 +103,7 @@
                                 </a>
                             @endforeach
                         @else
-                            <span class="mr-4 bg-[#9BADDA] py-2 px-5 rounded-lg drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)]">No Tags</span>
+                            <span class="mr-4 bg-[#9BADDA] py-2 px-5 rounded-lg drop-shadow-[8px_8px_4px_rgba(107,114,158,0.35)]" style="color: #FAFAF6;">No Tags</span>
                         @endif
                     </div>
                 </div>
